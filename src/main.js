@@ -24,6 +24,7 @@ function main() {
 
   // capture els
   $mMain = document.getElementById("main")
+  setTimeout(() => toggleUi(true))
 
   // initialize
   mScene = initScene()
@@ -52,6 +53,10 @@ function syncDatas(data) {
 }
 
 function syncColors(theme) {
+}
+
+function toggleUi(isVisible) {
+  $mMain.classList.toggle("is-ui-hidden", isVisible === null ? undefined : !isVisible)
 }
 
 // -- events --
@@ -91,7 +96,7 @@ function didPressKey(evt) {
 
 // -- e/misc
 function didClickUiToggle(_evt) {
-  $mMain.classList.toggle("is-ui-hidden")
+  $mMain.classList.toggleUi()
 }
 
 function didClickPause(evt) {
