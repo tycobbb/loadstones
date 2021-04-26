@@ -18,10 +18,14 @@ const kLenUvBuf = kNumPos * kLenUv
 // -- impls --
 export class Slab {
   // -- props --
+  // the backing mesh, access this through `ref`
   mesh = null
 
   // -- lifetime --
-  constructor(x0, y0, z0) {
+  constructor(
+    px, py, pz,
+    sw = 1.0, sh = 1.0,
+  ) {
     // create geometry
     const geometry = new SlabGeometry(0.0, 0.0)
 
@@ -33,14 +37,23 @@ export class Slab {
 
     // build mesh
     const mesh = new T.Mesh(geometry, material)
-    mesh.position.set(x0, y0, z0)
+    mesh.position.set(px, py, pz)
+    mesh.scale.set(sw, sh, sw)
 
     // store mesh
     this.mesh = mesh
   }
 
   // -- queries --
-  ref() {
+  get pos() {
+    return this.mesh.position
+  }
+
+  get scl() {
+    return this.mesh.scale
+  }
+
+  get ref() {
     return this.mesh
   }
 }

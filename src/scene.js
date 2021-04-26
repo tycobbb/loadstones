@@ -21,9 +21,9 @@ export function init() {
   mRock.generate()
 
   // add root object to scene
-  root().rotation.x = 0.5
-  root().rotation.y = 0.5
-  mScene.add(root())
+  mRock.ref.rotation.x = 0.5
+  mRock.ref.rotation.y = 0.5
+  mScene.add(mRock.ref)
 
   // export module
   return {
@@ -34,12 +34,7 @@ export function init() {
 
 // -- commands --
 function sim() {
-  root().rotation.y += 0.005
-}
-
-// -- queries --
-function root() {
-  return mRock.ref()
+  mRock.ref.rotation.y += 0.005
 }
 
 // -- queries --

@@ -13,14 +13,67 @@ export class Rock {
 
   // -- commands --
   generate() {
-    const g = this.group
-    g.add(new Slab(0.0, 0.0, 0.0).ref())
-    g.add(new Slab(0.5, 0.5, -0.25).ref())
-    g.add(new Slab(-0.5, 0.75, 0.25).ref())
+    const rock = this
+
+    rock.gen(
+      0,
+      new Slab(
+        0.0, 0.0, 0.0,
+        1.0, 1.0,
+      )
+    )
+  }
+
+  gen(depth, slab) {
+    const rock = this
+
+    // add this slab
+    rock.add(slab)
+
+    // bottom out
+    if (depth == 2) {
+      return
+    }
+
+    // calc some parent attributes
+    const pp = slab.pos
+    const sp = slab.scl
+
+    // top, edge mag
+    const pt = pp.y + sp.y * 0.5
+    const pe = pp.x + sp.x * 0.5
+
+    // generate some children
+    const scx = sp.x * 0.5
+    const scy = sp.y * 0.5
+
+    const spx = pt + scx * 0.5
+    const spy = pe + scy * 0.5
+
+    rock.gen(
+      depth + 1,
+      new Slab(
+        pe - scx * 0.5, pt + scy * 0.5, scx * 0.5 - pe,
+        scx, scy,
+      )
+    )
+
+    rock.gen(
+      depth + 1,
+      new Slab(
+        scx * 0.5 - pe, pt + scy * 0.5, pe - scx * 0.5,
+        scx, scy,
+      )
+    )
+  }
+
+  // -- c/helpers
+  add(slab) {
+    this.group.add(slab.ref)
   }
 
   // -- queries --
-  ref() {
+  get ref() {
     return this.group
   }
 }
