@@ -12,7 +12,7 @@ const kTemplate = `
   ${renderList(kDatas, (d) => `
     <div class="Field">
       <label for="${d}" class="Field-title">${d}</label>
-      <input id="${d}" name="${d}" type="number">
+      <input id="${d}" class="Field-input" name="${d}" type="number">
     </div>
   `)}
 `

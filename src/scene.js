@@ -13,7 +13,7 @@ export function init() {
   mScene = new T.Scene()
 
   // set background
-  mScene.background = new T.Color(0x050505)
+  mScene.background = new T.Color(0xaaffaa)
 
   // add light
   const light = new T.DirectionalLight(0xffffff, 1.0)
