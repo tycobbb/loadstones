@@ -1,19 +1,29 @@
 import * as T from "../lib/three@0.128.0.min.js"
 
 // -- constants --
-const kNumRocks = 1
-const kNumVertices = kNumRocks * 6 * 4
-const kNumIndices = kNumRocks * 6 * 6
+const kNumRocks = 2
+const kNumFacesPerRock = 6
+
+const kNumPosPerFace = 4
+const kNumPosPerRock = kNumFacesPerRock * kNumPosPerFace
+const kNumPos = kNumRocks * kNumPosPerRock
+
+const kNumIndicesPerFace = 6
+const kNumIndicesPerRock = kNumFacesPerRock * kNumIndicesPerFace
+const kNumIndices = kNumRocks * kNumIndicesPerRock
 
 // -- c/len
 const kLenVertex = 3
+const kLenVertexBuf = kNumPos * kLenVertex
 const kLenNormal = 3
+const kLenNormalBuf = kNumPos * kLenNormal
 const kLenUv = 2
+const kLenUvBuf = kNumPos * kLenUv
 
 // -- props --
 let mScene = null
 let mRock = null
-let mLength = kNumVertices
+let mLen = 0
 
 // -- lifetime --
 export function init() {
@@ -28,9 +38,9 @@ export function init() {
   // create rock buffers
   const geometry = new T.BufferGeometry()
   geometry.setIndex(new T.Uint32BufferAttribute(new Uint32Array(kNumIndices), 1))
-  geometry.setAttribute("position", new T.Float32BufferAttribute(new Float32Array(kNumVertices * kLenVertex), kLenVertex))
-  geometry.setAttribute("normal", new T.Float32BufferAttribute(new Float32Array(kNumVertices * kLenNormal), kLenNormal))
-  geometry.setAttribute("uv", new T.Float32BufferAttribute(new Float32Array(kNumVertices * kLenUv), kLenUv))
+  geometry.setAttribute("position", new T.Float32BufferAttribute(new Float32Array(kLenVertexBuf), kLenVertex))
+  geometry.setAttribute("normal", new T.Float32BufferAttribute(new Float32Array(kLenNormalBuf), kLenNormal))
+  geometry.setAttribute("uv", new T.Float32BufferAttribute(new Float32Array(kLenUvBuf), kLenUv))
 
   // add rock mesh to scene
   const material = new T.MeshStandardMaterial({
@@ -45,6 +55,7 @@ export function init() {
 
   // update rock buffers
   addRock(0.0, 0.0)
+  addRock(1.0, 0.0)
 
   // export module
   return {
@@ -77,6 +88,9 @@ function addRock(x0, y0, w = 1.0, h = 1.0, d = 1.0) {
   initPlane("x", "y", "z", +1, -1, w, h, d, 4) // pz
   initPlane("x", "y", "z", -1, -1, w, h, -d, 5) // nz
 
+  // update the number of drawn indices
+  mLen += 1
+
   // mark rock as invalid
   syncRock()
 
@@ -103,7 +117,7 @@ function addRock(x0, y0, w = 1.0, h = 1.0, d = 1.0) {
 
       // and apply it to buffer
       const vs = mRock.geometry.attributes.position.array
-      const iv = (nVerts + i) * kLenVertex
+      const iv = (mLen * kNumPosPerRock + nVerts + i) * kLenVertex
       vs[iv + 0] = v.x + x0
       vs[iv + 1] = v.y + y0
       vs[iv + 2] = v.z
@@ -115,14 +129,14 @@ function addRock(x0, y0, w = 1.0, h = 1.0, d = 1.0) {
 
       // now apply vector to buffer
       const ns = mRock.geometry.attributes.normal.array
-      const im = (nVerts + i) * kLenNormal
+      const im = (mLen * kNumPosPerRock + nVerts + i) * kLenNormal
       ns[im + 0] = v.x
       ns[im + 1] = v.y
       ns[im + 2] = v.z
 
       // uvs
       const us = mRock.geometry.attributes.uv.array
-      const iu = (nVerts + i) * kLenUv
+      const iu = (mLen * kNumPosPerRock + nVerts + i) * kLenUv
       us[iu + 0] = ix
       us[iu + 1] = 1 - iy
     }
@@ -138,7 +152,7 @@ function addRock(x0, y0, w = 1.0, h = 1.0, d = 1.0) {
 
     // faces
     const is = mRock.geometry.index.array
-    const ix = nIndices
+    const ix = (mLen * kNumIndicesPerRock) + nIndices
     is[ix + 0] = ia
     is[ix + 1] = ib
     is[ix + 2] = id
@@ -158,10 +172,18 @@ function addRock(x0, y0, w = 1.0, h = 1.0, d = 1.0) {
 }
 
 function syncRock() {
-  mRock.geometry.index.needsUpdate = true
-  mRock.geometry.attributes.position.needsUpdate = true
-  mRock.geometry.attributes.normal.needsUpdate = true
-  mRock.geometry.attributes.uv.needsUpdate = true
-  mRock.geometry.computeBoundingBox()
-  mRock.geometry.computeBoundingSphere()
+  const g = mRock.geometry
+
+  // update draw range to include new indices
+  g.setDrawRange(0, mLen * kNumIndicesPerRock)
+
+  // flag attribs as dirty
+  g.index.needsUpdate = true
+  g.attributes.position.needsUpdate = true
+  g.attributes.normal.needsUpdate = true
+  g.attributes.uv.needsUpdate = true
+
+  // recompute bounding boxes
+  g.computeBoundingBox()
+  g.computeBoundingSphere()
 }
