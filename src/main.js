@@ -1,4 +1,5 @@
 import { loadEl } from "./load.js"
+import { init as initScene } from "./scene.js"
 import { init as initView } from "./view.js"
 import { init as initColors } from "./colors.js"
 import { init as initDatas } from "./datas.js"
@@ -9,6 +10,7 @@ let mFrame = 0
 let mIsPaused = false
 
 // -- p/components
+let mScene = null
 let mView = null
 let mColors = null
 let mDatas = null
@@ -24,7 +26,8 @@ function main() {
   $mMain = document.getElementById("main")
 
   // initialize
-  mView = initView("view")
+  mScene = initScene()
+  mView = initView("view", mScene)
   mColors = initColors()
   mDatas = initDatas()
   initEvents()
@@ -37,7 +40,7 @@ function main() {
 function loop() {
   if (!mIsPaused) {
     mTime = performance.now() / 1000
-    mView.sim()
+    mScene.sim()
     mView.draw()
     mFrame++
   }
@@ -58,7 +61,7 @@ function initEvents() {
   mColors.onChange(syncColors)
 
   // add mouse events
-  const $canvas = mView.getEl()
+  const $canvas = mView.ref()
   $canvas.addEventListener("click", didClickMouse)
   $canvas.addEventListener("mousemove", didMoveMouse)
 
