@@ -1,9 +1,9 @@
 import * as T from "../lib/three@0.128.0.min.js"
 
 // -- constants --
-const kNumFaces = 6
-const kNumVertices = kNumFaces * 4
-const kNumIndices = kNumFaces * 6
+const kNumRocks = 1
+const kNumVertices = kNumRocks * 6 * 4
+const kNumIndices = kNumRocks * 6 * 6
 
 // -- c/len
 const kLenVertex = 3
@@ -12,15 +12,11 @@ const kLenUv = 2
 
 // -- props --
 let mScene = null
-let mBuffers = null
 let mRock = null
 let mLength = kNumVertices
 
 // -- lifetime --
 export function init() {
-  // init props
-  mBuffers = initBuffers()
-
   // init scene
   mScene = new T.Scene()
   mScene.background = new T.Color(0xaaffaa)
@@ -29,15 +25,14 @@ export function init() {
   const light = new T.DirectionalLight(0xffffff, 1.0)
   mScene.add(light)
 
-  // create rock geometry
-  addRock()
+  // create rock buffers
   const geometry = new T.BufferGeometry()
-  geometry.setIndex(new T.Uint32BufferAttribute(mBuffers.indices, 1))
-  geometry.setAttribute("position", new T.Float32BufferAttribute(mBuffers.vertices, kLenVertex))
-  geometry.setAttribute("normal", new T.Float32BufferAttribute(mBuffers.normals, kLenNormal))
-  geometry.setAttribute("uv", new T.Float32BufferAttribute(mBuffers.uvs, kLenUv))
+  geometry.setIndex(new T.Uint32BufferAttribute(new Uint32Array(kNumIndices), 1))
+  geometry.setAttribute("position", new T.Float32BufferAttribute(new Float32Array(kNumVertices * kLenVertex), kLenVertex))
+  geometry.setAttribute("normal", new T.Float32BufferAttribute(new Float32Array(kNumVertices * kLenNormal), kLenNormal))
+  geometry.setAttribute("uv", new T.Float32BufferAttribute(new Float32Array(kNumVertices * kLenUv), kLenUv))
 
-  // add rock
+  // add rock mesh to scene
   const material = new T.MeshStandardMaterial({
     color: 0xff00ff,
     emissive: 0xafaf00,
@@ -46,8 +41,10 @@ export function init() {
   mRock = new T.Mesh(geometry, material)
   mRock.rotation.x = 0.5
   mRock.rotation.y = 0.5
-
   mScene.add(mRock)
+
+  // update rock buffers
+  addRock(0.0, 0.0)
 
   // export module
   return {
@@ -67,16 +64,7 @@ function ref() {
 }
 
 // -- factories --
-function initBuffers() {
-  return {
-    indices: new Uint32Array(kNumIndices),
-    vertices: new Float32Array(kNumVertices * kLenVertex),
-    normals: new Float32Array(kNumVertices * kLenNormal),
-    uvs: new Float32Array(kNumVertices * kLenUv),
-  }
-}
-
-function addRock(w = 1.0, h = 1.0, d = 1.0) {
+function addRock(x0, y0, w = 1.0, h = 1.0, d = 1.0) {
   // helper variables
   let nVerts = 0
   let nIndices = 0
@@ -88,6 +76,9 @@ function addRock(w = 1.0, h = 1.0, d = 1.0) {
   initPlane("x", "z", "y", +1, -1, w, d, -h, 3) // ny
   initPlane("x", "y", "z", +1, -1, w, h, d, 4) // pz
   initPlane("x", "y", "z", -1, -1, w, h, -d, 5) // nz
+
+  // mark rock as invalid
+  syncRock()
 
   // build geometry
   function initPlane(vu, vv, vw, vudir, vvdir, w, h, d, materialIndex) {
@@ -111,10 +102,10 @@ function addRock(w = 1.0, h = 1.0, d = 1.0) {
       v[vw] = d2
 
       // and apply it to buffer
-      const vs = mBuffers.vertices
+      const vs = mRock.geometry.attributes.position.array
       const iv = (nVerts + i) * kLenVertex
-      vs[iv + 0] = v.x
-      vs[iv + 1] = v.y
+      vs[iv + 0] = v.x + x0
+      vs[iv + 1] = v.y + y0
       vs[iv + 2] = v.z
 
       // set normal values to correct vector component
@@ -123,14 +114,14 @@ function addRock(w = 1.0, h = 1.0, d = 1.0) {
       v[vw] = d > 0 ? 1 : - 1
 
       // now apply vector to buffer
-      const ns = mBuffers.normals
+      const ns = mRock.geometry.attributes.normal.array
       const im = (nVerts + i) * kLenNormal
       ns[im + 0] = v.x
       ns[im + 1] = v.y
       ns[im + 2] = v.z
 
       // uvs
-      const us = mBuffers.uvs
+      const us = mRock.geometry.attributes.uv.array
       const iu = (nVerts + i) * kLenUv
       us[iu + 0] = ix
       us[iu + 1] = 1 - iy
@@ -146,7 +137,7 @@ function addRock(w = 1.0, h = 1.0, d = 1.0) {
     const id = nVerts + 1
 
     // faces
-    const is = mBuffers.indices
+    const is = mRock.geometry.index.array
     const ix = nIndices
     is[ix + 0] = ia
     is[ix + 1] = ib
@@ -164,4 +155,13 @@ function addRock(w = 1.0, h = 1.0, d = 1.0) {
     // update total number of vertices
     nVerts += 4
   }
+}
+
+function syncRock() {
+  mRock.geometry.index.needsUpdate = true
+  mRock.geometry.attributes.position.needsUpdate = true
+  mRock.geometry.attributes.normal.needsUpdate = true
+  mRock.geometry.attributes.uv.needsUpdate = true
+  mRock.geometry.computeBoundingBox()
+  mRock.geometry.computeBoundingSphere()
 }
