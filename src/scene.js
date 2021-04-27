@@ -4,7 +4,7 @@ import { Rock } from "./Rock.js"
 // -- props --
 let mScene = null
 let mRock = null
-let mLen = 0
+let mParams = null
 
 // -- lifetime --
 export function init() {
@@ -18,7 +18,6 @@ export function init() {
 
   // add rock to scene
   mRock = new Rock()
-  mRock.generate()
 
   // add root object to scene
   mRock.ref.rotation.x = 0.5
@@ -29,12 +28,23 @@ export function init() {
   return {
     ref,
     sim,
+    setParams,
   }
 }
 
 // -- commands --
 function sim() {
   mRock.ref.rotation.y += 0.005
+}
+
+function setParams(params) {
+  mParams = params
+  mRock.setDepth(params.levels)
+  regenerate()
+}
+
+function regenerate() {
+  mRock.generate()
 }
 
 // -- queries --

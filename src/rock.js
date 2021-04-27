@@ -5,6 +5,7 @@ import { Slab } from "./slab.js"
 export class Rock {
   // -- props --
   group = null
+  depth = 0
 
   // -- lifetime --
   constructor() {
@@ -15,6 +16,10 @@ export class Rock {
   generate() {
     const rock = this
 
+    // clear any extant slabs
+    rock.clear()
+
+    // and start over
     rock.gen(
       0,
       new Slab(
@@ -31,7 +36,7 @@ export class Rock {
     rock.add(slab)
 
     // bottom out
-    if (depth == 2) {
+    if (depth == rock.depth) {
       return
     }
 
@@ -65,6 +70,22 @@ export class Rock {
         scx, scy,
       )
     )
+  }
+
+  clear() {
+    const g = this.group
+
+    for (const c of g.children) {
+      c.geometry.dispose()
+      c.material.dispose()
+    }
+
+    g.clear()
+  }
+
+  // -- c/config
+  setDepth(depth) {
+    this.depth = depth || 0
   }
 
   // -- c/helpers

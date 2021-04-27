@@ -24,7 +24,7 @@ export class Slab {
   // -- lifetime --
   constructor(
     px, py, pz,
-    sw = 1.0, sh = 1.0,
+    sw, sh,
   ) {
     // create geometry
     const geometry = new SlabGeometry(0.0, 0.0)

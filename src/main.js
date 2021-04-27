@@ -2,7 +2,7 @@ import { loadEl } from "./load.js"
 import { init as initScene } from "./scene.js"
 import { init as initView } from "./view.js"
 import { init as initColors } from "./colors.js"
-import { init as initDatas } from "./datas.js"
+import { init as initParams } from "./params.js"
 
 // -- props -
 let mTime = null
@@ -13,7 +13,7 @@ let mIsPaused = false
 let mScene = null
 let mView = null
 let mColors = null
-let mDatas = null
+let mParams = null
 
 // -- p/els
 let $mMain = null
@@ -30,7 +30,7 @@ function main() {
   mScene = initScene()
   mView = initView("view", mScene)
   mColors = initColors()
-  mDatas = initDatas()
+  mParams = initParams()
   initEvents()
 
   // start loop
@@ -49,7 +49,8 @@ function loop() {
   requestAnimationFrame(loop)
 }
 
-function syncDatas(data) {
+function syncParams(params) {
+  mScene.setParams(params)
 }
 
 function syncColors(theme) {
@@ -62,7 +63,7 @@ function toggleUi(isVisible) {
 // -- events --
 function initEvents() {
   // synchronize data
-  mDatas.onChange(syncDatas)
+  mParams.onChange(syncParams)
   mColors.onChange(syncColors)
 
   // add mouse events

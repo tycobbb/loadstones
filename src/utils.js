@@ -1,7 +1,3 @@
-export function renderList(collection, render) {
-  return Object.values(collection).map(render).join("")
-}
-
 export function getRgbaFromHex(hex) {
   let str = hex
   if (hex[0] === "#") {
