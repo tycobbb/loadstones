@@ -1,5 +1,5 @@
 import * as T from "../lib/three@0.128.0.min.js"
-import { Rock } from "./Rock.js"
+import { Rock } from "./rock.js"
 import { material } from "./material.js"
 
 // -- props --
