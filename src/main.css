@@ -11,12 +11,12 @@ body {
 
 h1 {
   font-size: 3em;
-  font-weight: normal;
+  font-weight: lighter;
 }
 
 h2 {
   font-size: 1.5em;
-  font-weight: normal;
+  font-weight: lighter;
 }
 
 /* layout */

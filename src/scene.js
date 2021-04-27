@@ -1,10 +1,13 @@
 import * as T from "../lib/three@0.128.0.min.js"
 import { Rock } from "./Rock.js"
+import { material } from "./material.js"
 
 // -- props --
 let mScene = null
 let mRock = null
+let mLight = null
 let mParams = null
+let mColors = null
 
 // -- lifetime --
 export function init() {
@@ -13,8 +16,8 @@ export function init() {
   mScene.background = new T.Color(0xaaffaa)
 
   // add light
-  const light = new T.DirectionalLight(0xffffff, 1.0)
-  mScene.add(light)
+  mLight = new T.DirectionalLight(0xffffff, 1.0)
+  mScene.add(mLight)
 
   // add rock to scene
   mRock = new Rock()
@@ -29,6 +32,7 @@ export function init() {
     ref,
     sim,
     setParams,
+    setColors,
   }
 }
 
@@ -41,6 +45,20 @@ function setParams(params) {
   mParams = params
   mRock.setDepth(params.levels)
   regenerate()
+}
+
+function setColors(colors) {
+  mColors = colors
+
+  const bg = mScene.background
+  bg.setHex(colors.bg)
+
+  const light = mLight.color
+  light.setHex(colors.light)
+
+  const mat = material()
+  mat.setColor(colors.rock)
+  mat.setEmissive(colors.emissive)
 }
 
 function regenerate() {

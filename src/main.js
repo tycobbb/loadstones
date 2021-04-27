@@ -53,7 +53,8 @@ function syncParams(params) {
   mScene.setParams(params)
 }
 
-function syncColors(theme) {
+function syncColors(colors) {
+  mScene.setColors(colors)
 }
 
 function toggleUi(isVisible) {

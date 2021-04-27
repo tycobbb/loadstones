@@ -77,7 +77,6 @@ export class Rock {
 
     for (const c of g.children) {
       c.geometry.dispose()
-      c.material.dispose()
     }
 
     g.clear()
@@ -86,6 +85,10 @@ export class Rock {
   // -- c/config
   setDepth(depth) {
     this.depth = depth || 0
+  }
+
+  setColors(colors) {
+    this.colors = colors
   }
 
   // -- c/helpers

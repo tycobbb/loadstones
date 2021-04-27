@@ -1,4 +1,5 @@
 import * as T from "../lib/three@0.128.0.min.js"
+import { material } from "./material.js"
 
 // -- constants --
 const kNumFacesPerRock = 6
@@ -29,14 +30,8 @@ export class Slab {
     // create geometry
     const geometry = new SlabGeometry(0.0, 0.0)
 
-    // create material
-    const material = new T.MeshStandardMaterial({
-      color: 0xff00ff,
-      emissive: 0xafaf00,
-    })
-
     // build mesh
-    const mesh = new T.Mesh(geometry, material)
+    const mesh = new T.Mesh(geometry, material().ref())
     mesh.position.set(px, py, pz)
     mesh.scale.set(sw, sh, sw)
 

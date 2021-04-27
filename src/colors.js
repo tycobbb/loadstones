@@ -1,31 +1,38 @@
-// -- constants --
-const kColors = [
-  "#b68a5b",
-  "#b86661",
-  "#63a5af",
-  "#7f88b4",
-  "#d461a0",
-  "#dd697e",
-  "#dd7f6e",
-  "#e88259",
-]
+import { Options } from "./options.js"
+import { getIntFromHex } from "./utils.js"
 
-const kTemplate = `
-  <div class="ColorPicker Field">
+// -- constants --
+const kColors = Options.parse([
+  "#aaffaa",
+  "#ff00ff",
+  "#afaf00",
+  "#ffffff",
+])
+
+const kOptions = Options.parse([
+  { name: "bg", value: 0 },
+  { name: "rock", value: 1 },
+  { name: "emissive", value: 2 },
+  { name: "light", value: 3 },
+])
+
+const kTemplate = kOptions.render(({ name, value }) => `
+  <div class="ColorPicker Field" name="${name}">
     <p class="Field-title">
-      color <span class="ColorPicker-idx">x</span>
+      ${name}
     </p>
 
     <div class="Select">
       <select class="Select-input">
-        ${kColors.map((color, i) => `
+        ${kColors.render((color, i) => `
           <option
             value="${i}"
             style="color: ${getStyleHex(color)};"
+            ${i === value ? "selected" : ""}
           >
             ${color}
           </option>
-        `).join("")}
+        `)}
 
         <option
           class="ColorPicker-customOption"
@@ -44,26 +51,24 @@ const kTemplate = `
       value="#000000"
     >
   </div>
-`
+`)
 
 // -- props --
 let $mColors = null
-let $mTemplate = null
 
 // -- lifetime --
 export function init() {
+  // render color pickers
   $mColors = document.getElementById("colors")
-  if ($mColors == null) {
-    return console.error("could not find colors conatiner")
+  $mColors.innerHTML = kTemplate
+
+  // init pickers
+  for (const $el of $mColors.children) {
+    // set initial value
+    setPickerColor($el, $el.querySelector("select").value)
+    // add events
+    $el.addEventListener("input", didClickOption)
   }
-
-  // build template
-  const $el = document.createElement("div")
-  $el.innerHTML = kTemplate
-  $mTemplate = $el.firstElementChild
-
-  // add initial colors
-  addColors([3, 3, 1, 1, 7, 6, 5, 1])
 
   // export
   return {
@@ -80,27 +85,6 @@ function onChange(action) {
   })
 }
 
-function addColors(colors = []) {
-  let i = 0
-  for (const color of colors) {
-    const $el = $mTemplate.cloneNode(true)
-
-    // set title
-    $el.querySelector(".ColorPicker-idx").innerText = `${i}`
-
-    // set initial value
-    setPickerColor($el, color)
-
-    // add events
-    $el.addEventListener("input", didClickOption)
-
-    // append el
-    $mColors.appendChild($el)
-
-    i++
-  }
-}
-
 function setPickerColor($el, color) {
   const hex = getColorHex($el, color)
   const value = getColorValue(color)
@@ -112,7 +96,7 @@ function setPickerColor($el, color) {
   // update select value, color
   const $select = $el.querySelector(".Select-input")
   $select.value = value
-  $select.style.color = getStyleHex(hex)
+  $select.style.color = $el.getAttribute("name") !== "bg" ? getStyleHex(hex) : "black"
 
   // update custom option color
   const $option = $select.querySelector(".ColorPicker-customOption")
@@ -124,20 +108,19 @@ function setPickerColor($el, color) {
 
 // -- queries --
 function getColors() {
-  const colors = Array.from($mColors.children).map(($el) => {
-    return $el.getAttribute("color")
-  })
+  const colors = {}
 
-  return {
-    bg: colors.slice(0, 4),
-    fg: colors.slice(4),
+  for (const $el of Array.from($mColors.children)) {
+    colors[$el.getAttribute("name")] = getIntFromHex($el.getAttribute("color"))
   }
+
+  return colors
 }
 
 function getColorHex($el, color) {
   const i = Number.parseInt(color)
   if (!Number.isNaN(i)) {
-    return kColors[i]
+    return kColors.get(i)
   } else if (color === "custom") {
     return $el.querySelector(".ColorPicker-custom").value
   } else {

@@ -21,8 +21,11 @@ export class Options {
     }
 
     const options = {}
+
+    let i = 0
     for (const item of args) {
-      options[item.name] = item
+      options[item.name || i] = item
+      i++
     }
 
     return new Options(options)
