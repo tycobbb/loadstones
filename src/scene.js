@@ -48,7 +48,7 @@ export function init() {
 
 // -- commands --
 function sim() {
-  mRock.ref.rotation.y += 0.005
+  mRock.ref.rotation.y -= 0.005
 }
 
 function setParams(params) {
@@ -89,11 +89,6 @@ function setDebug(isDebug) {
   for (const helper of mHelpers) {
     helper.visible = isDebug
   }
-  // if (isDebug && mHelpers.length === 0) {
-  //   addHelpers()
-  // } else if (!isDebug && mHelpers.length !== 0) {
-  //   removeHelpers()
-  // }
 }
 
 function addHelpers() {

@@ -24,12 +24,13 @@ export class Slab {
 
   // -- lifetime --
   constructor(
+    taper,
     px, py, pz,
     sw, sh,
     ax, ay, az,
   ) {
-    // create geometry
-    const geometry = new SlabGeometry(0.0, 0.0)
+    // build geometry
+    const geometry = new SlabGeometry(taper)
 
     // build mesh
     const mesh = new T.Mesh(geometry, material().ref())
@@ -62,111 +63,61 @@ export class Slab {
 // -- i/geometry
 class SlabGeometry extends T.BufferGeometry {
   // -- lifetime --
-  constructor() {
+  constructor(taper) {
     super()
 
-    // allocate buffers
-    const g = this
-    g.setIndex(new T.Uint32BufferAttribute(new Uint32Array(kNumIndices), 1))
-    g.setAttribute("position", new T.Float32BufferAttribute(new Float32Array(kLenVertexBuf), kLenVertex))
-    g.setAttribute("normal", new T.Float32BufferAttribute(new Float32Array(kLenNormalBuf), kLenNormal))
-    g.setAttribute("uv", new T.Float32BufferAttribute(new Float32Array(kLenUvBuf), kLenUv))
+    // create geometry
+    const h0 = 1.0 / 2
+    const l0 = 1.0 / 2
+    const l1 = l0 * taper
 
-    // generate slab
-    g.generate()
-  }
+    // make a cuboid from these eight points that allows for
+    // different top and bottom areas
+    //
+    //      d ---- c
+    //    / |    / |
+    //  a ----- b  |
+    //  |   h --|- g
+    //  | /     | /
+    //  e ----- f
+    //
 
-  // -- commands --
-  generate(w = 1.0, h = 1.0, d = 1.0) {
-    // helper variables
-    let nVerts = 0
-    let nIndices = 0
+    const a = new T.Vector3(-l1, h0, l1)
+    const b = new T.Vector3(l1, h0, l1)
+    const c = new T.Vector3(l1, h0, -l1)
+    const d = new T.Vector3(-l1, h0, -l1)
 
-    // capture this ref
-    const thiz = this
+    const e = new T.Vector3(-l0, -h0, l0)
+    const f = new T.Vector3(l0, -h0, l0)
+    const g = new T.Vector3(l0, -h0, -l0)
+    const h = new T.Vector3(-l0, -h0, -l0)
 
-    // build each side of the box geometry
-    initFace("z", "y", "x", -1, -1, d, h, w, 0) // px
-    initFace("z", "y", "x", +1, -1, d, h, -w, 1) // nx
-    initFace("x", "z", "y", +1, +1, w, d, h, 2) // py
-    initFace("x", "z", "y", +1, -1, w, d, -h, 3) // ny
-    initFace("x", "y", "z", +1, -1, w, h, d, 4) // pz
-    initFace("x", "y", "z", -1, -1, w, h, -d, 5) // nz
+    this.setFromPoints([
+      // bottom
+      e, h, g,
+      g, f, e,
 
-    // build geometry
-    function initFace(vu, vv, vw, vudir, vvdir, w, h, d, im) {
-      const w2 = w / 2
-      const h2 = h / 2
-      const d2 = d / 2
+      // left
+      h, e, a,
+      a, d, h,
 
-      const v = new T.Vector3()
+      // front
+      a, e, b,
+      b, e, f,
 
-      // generate vertices, normals and uvs
-      for (let i = 0; i < 4; i++) {
-        const ix = i % 2
-        const iy = Math.floor(i / 2)
+      // right
+      b, f, c,
+      c, f, g,
 
-        const x = ix * w - w2
-        const y = iy * h - h2
+      // back
+      c, g, h,
+      h, d, c,
 
-        // set vert values to correct vector component
-        v[vu] = x * vudir
-        v[vv] = y * vvdir
-        v[vw] = d2
+      // top
+      d, a, c,
+      c, a, b,
+    ])
 
-        // and apply it to buffer
-        const vs = thiz.attributes.position.array
-        const iv = (nVerts + i) * kLenVertex
-        vs[iv + 0] = v.x
-        vs[iv + 1] = v.y
-        vs[iv + 2] = v.z
-
-        // set normal values to correct vector component
-        v[vu] = 0
-        v[vv] = 0
-        v[vw] = d > 0 ? 1 : - 1
-
-        // now apply vector to buffer
-        const ns = thiz.attributes.normal.array
-        const im = (nVerts + i) * kLenNormal
-        ns[im + 0] = v.x
-        ns[im + 1] = v.y
-        ns[im + 2] = v.z
-
-        // uvs
-        const us = thiz.attributes.uv.array
-        const iu = (nVerts + i) * kLenUv
-        us[iu + 0] = ix
-        us[iu + 1] = 1 - iy
-      }
-
-      // indices
-      // 1. you need three indices to draw a single face
-      // 2. a single segment consists of two faces
-      // 3. so we need to generate six (2*3) indices per segment
-      const ia = nVerts
-      const ib = nVerts + 2
-      const ic = nVerts + 3
-      const id = nVerts + 1
-
-      // faces
-      const is = thiz.index.array
-      const ix = nIndices
-      is[ix + 0] = ia
-      is[ix + 1] = ib
-      is[ix + 2] = id
-      is[ix + 3] = ib
-      is[ix + 4] = ic
-      is[ix + 5] = id
-
-      // add a group to the geometry. this will ensure multi material support
-      thiz.addGroup(nIndices, kNumIndicesPerFace, im)
-
-      // calculate new start value for groups
-      nIndices += kNumIndicesPerFace
-
-      // update total number of vertices
-      nVerts += kNumPosPerFace
-    }
+    this.computeVertexNormals()
   }
 }

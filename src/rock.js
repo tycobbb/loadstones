@@ -31,6 +31,7 @@ export class Rock {
     rock.gen(
       0,
       new Slab(
+        0.5,
         0.0, 0.0, 0.0,
         1.0, 1.0,
         0.0, 0.0, 0.0,
@@ -67,6 +68,7 @@ export class Rock {
     rock.gen(
       depth + 1,
       new Slab(
+        1.0,
         pp.x, ct, pp.x,
         csx, csy,
         Math.PI / 8 * Math.random(), 2 * Math.PI * Math.random(), Math.PI / 8 * Math.random(),
