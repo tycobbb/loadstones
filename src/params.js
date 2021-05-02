@@ -12,6 +12,7 @@ const kTypes = {
 
 const kOptions = Options.parse([
   { name: "debug", type: kTypes.Bool, prompt: "enabled?" },
+  { name: "emission", type: kTypes.Float, val: 1.0, min: 0, max: 1.0, step: 0.1 },
   { name: "levels", type: kTypes.Int, val: 0, min: 0 },
   { name: "taper", type: kTypes.FloatRange, l: 0.7, r: 0.9, min: 0, max: 1.0, step: 0.01 },
 ])

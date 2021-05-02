@@ -18,7 +18,7 @@ export class Slab {
     const geometry = new SlabGeometry(taper)
 
     // build mesh
-    const mesh = new T.Mesh(geometry, material().ref())
+    const mesh = new T.Mesh(geometry, material().ref)
     mesh.position.set(px, py, pz)
     mesh.scale.set(sw, sh, sw)
     mesh.rotation.set(ax, ay, az)

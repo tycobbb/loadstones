@@ -14,27 +14,17 @@ export function material() {
   mMaterial = new T.MeshStandardMaterial({
     color: 0xff00ff,
     emissive: 0xafaf00,
+    emissiveIntensity: 1.0,
   })
 
   mInstance = {
-    setColor,
-    setEmissive,
-    ref,
+    get ref() { return getRef() },
   }
 
   return mInstance
 }
 
-// -- commands --
-function setColor(color) {
-  mMaterial.color.setHex(color)
-}
-
-function setEmissive(color) {
-  mMaterial.emissive.setHex(color)
-}
-
 // -- queries --
-function ref() {
+function getRef() {
   return mMaterial
 }

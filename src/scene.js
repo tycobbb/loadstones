@@ -52,13 +52,14 @@ function sim() {
   mRock.ref.rotation.y -= 0.005
 }
 
-function setParams({ debug, ...params }) {
+function setParams({ debug, emission, ...params }) {
   // update params
   const prev = mParams
   mParams = params
 
   // enable debugging tools if necessary
   setDebug(debug)
+  setEmission(emission)
 
   // regenerate rock if necessary
   if (prev == null || !equalish(prev, mParams)) {
@@ -81,9 +82,14 @@ function setColors(colors) {
   const light = mLight.color
   light.setHex(colors.light)
 
-  const mat = material()
-  mat.setColor(colors.rock)
-  mat.setEmissive(colors.emissive)
+  const mat = material().ref
+  mat.color.setHex(colors.rock)
+  mat.emissive.setHex(colors.emissive)
+}
+
+function setEmission(emission) {
+  const mat = material().ref
+  mat.emissiveIntensity = emission
 }
 
 // -- c/debug
