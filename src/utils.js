@@ -1,6 +1,14 @@
 // -- impls --
-export function render(value) {
+export function rs(value) {
   return value ? value : ""
+}
+
+export function rb(test, template) {
+  return rs(test && template())
+}
+
+export function ro(optional, template) {
+  return rs(optional != null && template(optional))
 }
 
 // -- i/color

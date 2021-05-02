@@ -1,21 +1,6 @@
 import * as T from "../lib/three@0.128.0.min.js"
 import { material } from "./material.js"
 
-// -- constants --
-const kNumFacesPerRock = 6
-const kNumPosPerFace = 4
-const kNumPos = kNumFacesPerRock * kNumPosPerFace
-const kNumIndicesPerFace = 6
-const kNumIndices = kNumFacesPerRock * kNumIndicesPerFace
-
-// -- c/len
-const kLenVertex = 3
-const kLenVertexBuf = kNumPos * kLenVertex
-const kLenNormal = 3
-const kLenNormalBuf = kNumPos * kLenNormal
-const kLenUv = 2
-const kLenUvBuf = kNumPos * kLenUv
-
 // -- impls --
 export class Slab {
   // -- props --

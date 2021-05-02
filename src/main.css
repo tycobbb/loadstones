@@ -126,16 +126,21 @@ h2 {
 }
 
 .Field-input {
-  border: none;
+  width: 100%;
   height: 18px;
+  border: none;
   background-color: #ffffff55;
 }
 
-.Field-prompt {
+.Field-prompt, .Field-divider {
   margin-left: 5px;
   font-size: 0.85em;
   font-style: italic;
   letter-spacing: 1px;
+}
+
+.Field-divider {
+  margin-right: 5px;
 }
 
 input[type="checkbox"].Field-input {
