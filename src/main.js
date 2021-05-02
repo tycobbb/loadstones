@@ -58,7 +58,7 @@ function syncColors(colors) {
 }
 
 function toggleUi(isVisible) {
-  $mMain.classList.toggle("is-ui-hidden", isVisible === null ? undefined : !isVisible)
+  $mMain.classList.toggle("is-ui-hidden", isVisible == null ? undefined : !isVisible)
 }
 
 // -- events --
@@ -98,7 +98,7 @@ function didPressKey(evt) {
 
 // -- e/misc
 function didClickUiToggle(_evt) {
-  $mMain.classList.toggleUi()
+  toggleUi()
 }
 
 function didClickPause(evt) {

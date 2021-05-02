@@ -22,7 +22,7 @@ const kTemplate = kOptions.render(({ name, value }) => `
       ${name}
     </p>
 
-    <div class="Select">
+    <div class="Select Field-input">
       <select class="Select-input">
         ${kColors.render((color, i) => `
           <option

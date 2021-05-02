@@ -1,13 +1,16 @@
 import * as T from "../lib/three@0.128.0.min.js"
 import { Rock } from "./rock.js"
+import { Floor } from "./floor.js"
 import { material } from "./material.js"
 
 // -- props --
 let mScene = null
+let mFloor = null
 let mRock = null
 let mLight = null
 let mParams = null
 let mColors = null
+let mHelpers = []
 
 // -- lifetime --
 export function init() {
@@ -17,15 +20,22 @@ export function init() {
 
   // add light
   mLight = new T.DirectionalLight(0xffffff, 1.0)
+  mLight.position.set(3.0, 2.0, 2.0)
+  mLight.lookAt(0.0, 0.0, 0.0)
+  mLight.castShadow = true
   mScene.add(mLight)
+
+  // add a floor plane
+  mFloor = new Floor()
+  mScene.add(mFloor.ref)
 
   // add rock to scene
   mRock = new Rock()
-
-  // add root object to scene
-  mRock.ref.rotation.x = 0.5
   mRock.ref.rotation.y = 0.5
   mScene.add(mRock.ref)
+
+  // add helpers, invisible by default
+  addHelpers()
 
   // export module
   return {
@@ -42,9 +52,18 @@ function sim() {
 }
 
 function setParams(params) {
+  // update params
+  const prev = mParams
   mParams = params
-  mRock.setDepth(params.levels)
-  regenerate()
+
+  // enable debugging tools if necessary
+  setDebug(mParams.debug)
+
+  // regenerate rock if necessary
+  if (prev == null || prev.levels != mParams.levels) {
+    mRock.setDepth(params.levels)
+    mRock.generate()
+  }
 }
 
 function setColors(colors) {
@@ -52,6 +71,10 @@ function setColors(colors) {
 
   const bg = mScene.background
   bg.setHex(colors.bg)
+
+  const floor = mFloor.ref.material
+  floor.color.setHex(colors.bg)
+  floor.emissive.setHex(colors.bg)
 
   const light = mLight.color
   light.setHex(colors.light)
@@ -61,8 +84,34 @@ function setColors(colors) {
   mat.setEmissive(colors.emissive)
 }
 
-function regenerate() {
-  mRock.generate()
+// -- c/debug
+function setDebug(isDebug) {
+  for (const helper of mHelpers) {
+    helper.visible = isDebug
+  }
+  // if (isDebug && mHelpers.length === 0) {
+  //   addHelpers()
+  // } else if (!isDebug && mHelpers.length !== 0) {
+  //   removeHelpers()
+  // }
+}
+
+function addHelpers() {
+  addHelper(new T.DirectionalLightHelper(mLight))
+}
+
+function removeHelpers() {
+  for (const helper of mHelpers) {
+    mScene.remove(helper)
+  }
+
+  mHelpers.clear()
+}
+
+function addHelper(helper) {
+  helper.visible = false
+  mHelpers.push(helper)
+  mScene.add(helper)
 }
 
 // -- queries --

@@ -114,15 +114,42 @@ h2 {
   margin-top: 15px;
 }
 
+.Field-title {
+  margin-bottom: 8px;
+  font-size: 0.85em;
+  letter-spacing: 1px;
+}
+
+.Field-line {
+  display: flex;
+  align-items: center;
+}
+
 .Field-input {
   border: none;
+  height: 18px;
   background-color: #ffffff55;
 }
 
-.Field-title {
-  margin-bottom: 5px;
+.Field-prompt {
+  margin-left: 5px;
   font-size: 0.85em;
+  font-style: italic;
   letter-spacing: 1px;
+}
+
+input[type="checkbox"].Field-input {
+  appearance: none;
+  margin: 0;
+  width: 18px;
+}
+
+input[type="checkbox"].Field-input:hover {
+  opacity: 0.8;
+}
+
+input[type="checkbox"].Field-input:checked {
+  background-color: white;
 }
 
 /* Select */
@@ -130,7 +157,6 @@ h2 {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: #ffffff55;
 }
 
 .Select::after {

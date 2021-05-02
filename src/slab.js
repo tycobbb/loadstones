@@ -26,6 +26,7 @@ export class Slab {
   constructor(
     px, py, pz,
     sw, sh,
+    ax, ay, az,
   ) {
     // create geometry
     const geometry = new SlabGeometry(0.0, 0.0)
@@ -34,6 +35,11 @@ export class Slab {
     const mesh = new T.Mesh(geometry, material().ref())
     mesh.position.set(px, py, pz)
     mesh.scale.set(sw, sh, sw)
+    mesh.rotation.set(ax, ay, az)
+
+    // add mesh shadows
+    mesh.castShadow = true
+    mesh.receiveShadow = true
 
     // store mesh
     this.mesh = mesh

@@ -1,3 +1,9 @@
+// -- impls --
+export function render(value) {
+  return value ? value : ""
+}
+
+// -- i/color
 export function getIntFromHex(hex) {
   let str = hex
   if (hex[0] === "#") {

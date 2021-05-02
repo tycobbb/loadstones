@@ -9,7 +9,15 @@ export class Rock {
 
   // -- lifetime --
   constructor() {
-    this.group = new T.Group()
+    // build group
+    const group = new T.Group()
+
+    // add shadows
+    group.castShadow = true
+    group.receiveShadow = true
+
+    // store group
+    this.group = group
   }
 
   // -- commands --
@@ -25,6 +33,7 @@ export class Rock {
       new Slab(
         0.0, 0.0, 0.0,
         1.0, 1.0,
+        0.0, 0.0, 0.0,
       )
     )
   }
@@ -40,36 +49,37 @@ export class Rock {
       return
     }
 
-    // calc some parent attributes
+    // grab parent attrs
     const pp = slab.pos
-    const sp = slab.scl
+    const ps = slab.scl
 
-    // top, edge mag
-    const pt = pp.y + sp.y * 0.5
-    const pe = pp.x + sp.x * 0.5
+    // calc parent top, edge
+    const pt = pp.y + ps.y * 0.5
+    console.log(pp.x)
 
-    // generate some children
-    const scx = sp.x * 0.5
-    const scy = sp.y * 0.5
+    // calc child scale
+    const csx = ps.x * 0.5
+    const csy = ps.y * 0.5
 
-    const spx = pt + scx * 0.5
-    const spy = pe + scy * 0.5
-
-    rock.gen(
-      depth + 1,
-      new Slab(
-        pe - scx * 0.5, pt + scy * 0.5, scx * 0.5 - pe,
-        scx, scy,
-      )
-    )
+    // calc child top, edge
+    const ct = pt + csy * 0.5
 
     rock.gen(
       depth + 1,
       new Slab(
-        scx * 0.5 - pe, pt + scy * 0.5, pe - scx * 0.5,
-        scx, scy,
+        pp.x, ct, pp.x,
+        csx, csy,
+        Math.PI / 8 * Math.random(), 2 * Math.PI * Math.random(), Math.PI / 8 * Math.random(),
       )
     )
+
+    // rock.gen(
+    //   depth + 1,
+    //   new Slab(
+    //     ce - pe, ct, pe - ce,
+    //     csx, csy,
+    //   )
+    // )
   }
 
   clear() {

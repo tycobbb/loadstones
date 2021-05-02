@@ -27,10 +27,12 @@ export function init(id, scene) {
     return false
   }
 
+  // capture screen size
   const f = $mEl.getBoundingClientRect()
   const w = f.width
   const h = f.height
 
+  // build camera
   mCamera = new T.PerspectiveCamera(
     kFov,
     w / h,
@@ -38,12 +40,17 @@ export function init(id, scene) {
     kFarPlane,
   )
 
+  // position camera
+  mCamera.position.set(0.0, 2.0, 5.0)
+  mCamera.lookAt(0.0, 0.0, 0.0)
+
+  // create renderer
   mRenderer = new T.WebGLRenderer()
   mRenderer.setSize(w, h)
+  mRenderer.shadowMap.enabled = true
 
+  // add to dom
   $mEl.appendChild(mRenderer.domElement)
-
-  mCamera.position.z = 5
 
   return {
     ref,
