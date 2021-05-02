@@ -1,4 +1,21 @@
 // -- impls --
+// deep-ish equality check
+export function equalish(l, r) {
+  for (const key in l) {
+    const li = l[key]
+    const ri = r[key]
+
+    if (li instanceof Object && !equalish(li, ri)) {
+      return false
+    } else if (li !== ri) {
+      return false
+    }
+  }
+
+  return true
+}
+
+// -- i/rendering
 export function rs(value) {
   return value ? value : ""
 }
@@ -9,6 +26,11 @@ export function rb(test, template) {
 
 export function ro(optional, template) {
   return rs(optional != null && template(optional))
+}
+
+// -- i/lerps
+export function unlerp(val, min, max) {
+  return min + val * (max - min)
 }
 
 // -- i/color

@@ -2,6 +2,7 @@ import * as T from "../lib/three@0.128.0.min.js"
 import { Rock } from "./rock.js"
 import { Floor } from "./floor.js"
 import { material } from "./material.js"
+import { equalish } from "./utils.js"
 
 // -- props --
 let mScene = null
@@ -51,17 +52,18 @@ function sim() {
   mRock.ref.rotation.y -= 0.005
 }
 
-function setParams(params) {
+function setParams({ debug, ...params }) {
   // update params
   const prev = mParams
   mParams = params
 
   // enable debugging tools if necessary
-  setDebug(mParams.debug)
+  setDebug(debug)
 
   // regenerate rock if necessary
-  if (prev == null || prev.levels != mParams.levels) {
-    mRock.setDepth(params.levels)
+  if (prev == null || !equalish(prev, mParams)) {
+    mRock.setDepth(mParams.levels)
+    mRock.setTaper(mParams.taper)
     mRock.generate()
   }
 }
@@ -93,14 +95,6 @@ function setDebug(isDebug) {
 
 function addHelpers() {
   addHelper(new T.DirectionalLightHelper(mLight))
-}
-
-function removeHelpers() {
-  for (const helper of mHelpers) {
-    mScene.remove(helper)
-  }
-
-  mHelpers.clear()
 }
 
 function addHelper(helper) {

@@ -1,11 +1,13 @@
 import * as T from "../lib/three@0.128.0.min.js"
 import { Slab } from "./slab.js"
+import { unlerp } from "./utils.js"
 
 // -- impls --
 export class Rock {
   // -- props --
   group = null
   depth = 0
+  taper = [1.0, 1.0]
 
   // -- lifetime --
   constructor() {
@@ -31,7 +33,7 @@ export class Rock {
     rock.gen(
       0,
       new Slab(
-        0.5,
+        rock.genTaper(),
         0.0, 0.0, 0.0,
         1.0, 1.0,
         0.0, 0.0, 0.0,
@@ -68,20 +70,12 @@ export class Rock {
     rock.gen(
       depth + 1,
       new Slab(
-        1.0,
+        rock.genTaper(),
         pp.x, ct, pp.x,
         csx, csy,
         Math.PI / 8 * Math.random(), 2 * Math.PI * Math.random(), Math.PI / 8 * Math.random(),
       )
     )
-
-    // rock.gen(
-    //   depth + 1,
-    //   new Slab(
-    //     ce - pe, ct, pe - ce,
-    //     csx, csy,
-    //   )
-    // )
   }
 
   clear() {
@@ -94,15 +88,6 @@ export class Rock {
     g.clear()
   }
 
-  // -- c/config
-  setDepth(depth) {
-    this.depth = depth || 0
-  }
-
-  setColors(colors) {
-    this.colors = colors
-  }
-
   // -- c/helpers
   add(slab) {
     this.group.add(slab.ref)
@@ -111,5 +96,22 @@ export class Rock {
   // -- queries --
   get ref() {
     return this.group
+  }
+
+  genTaper() {
+    return unlerp(Math.random(), ...this.taper)
+  }
+
+  // -- config --
+  setDepth(depth) {
+    this.depth = depth || 0
+  }
+
+  setTaper(taper) {
+    this.taper = taper || [1.0, 1.0]
+  }
+
+  setColors(colors) {
+    this.colors = colors
   }
 }
