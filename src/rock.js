@@ -106,8 +106,8 @@ export class Rock {
       // looking in a random upwards, outwards direction
       dir.setFromSphericalCoords(
         outside,
-        this.genCone(),
-        this.genSweep(),
+        this.genCone() * Math.PI,
+        this.genSweep() * Math.PI,
       )
 
       // move outside the slab in this direction
@@ -139,7 +139,7 @@ export class Rock {
       vec.setFromSphericalCoords(
         1.0,
         this.genAttitude() * Math.PI,
-        unlerp(rand(), 0.0, 2 * Math.PI),
+        unlerp(rand(), 0.0, 2.0) * Math.PI,
       )
 
       rot.setFromUnitVectors(T.Object3D.DefaultUp, vec)
