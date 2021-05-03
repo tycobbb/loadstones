@@ -11,7 +11,7 @@ export class Slab {
   constructor(
     taper,
     pos,
-    sw, sh,
+    scale,
     dir,
     roll,
   ) {
@@ -21,7 +21,7 @@ export class Slab {
     // build mesh
     const mesh = new T.Mesh(geometry, material().ref)
     mesh.position.copy(pos)
-    mesh.scale.set(sw, sh, sw)
+    mesh.scale.copy(scale)
     mesh.quaternion.setFromUnitVectors(mesh.up, dir)
     mesh.rotateOnAxis(mesh.up, roll)
     mesh.updateMatrix()

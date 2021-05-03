@@ -2,6 +2,19 @@ import * as T from "../lib/three@0.128.0.min.js"
 import { Slab } from "./slab.js"
 import { rand, unlerp } from "./utils.js"
 
+// -- tmp --
+// -- t/rays
+const ray = new T.Raycaster()
+const pos = new T.Vector3()
+const dir = new T.Vector3()
+
+// -- t/misc
+const vec = new T.Vector3()
+const rot = new T.Quaternion()
+
+// -- t/constant
+const zero = new T.Vector3()
+
 // -- impls --
 export class Rock {
   // -- props --
@@ -29,16 +42,20 @@ export class Rock {
     rock.clear()
 
     // get initial scale
-    const rs = rock.params.scale
+    const rs = rock.genScale(vec, rock.params.scale)
+
+    // get initial pos
+    pos.copy(zero)
+    pos.y += rs.y / 2 - 0.5
 
     // and start over
     rock.gen(
       0,
       new Slab(
         rock.genTaper(),
-        new T.Vector3(0.0, 0.0, 0.0),
-        rs, rs,
-        new T.Vector3(0.0, 0.0, 0.0),
+        pos,
+        rs,
+        zero,
         0.0,
       )
     )
@@ -54,15 +71,6 @@ export class Rock {
     if (depth == rock.params.depth) {
       return
     }
-
-    // raycast points on the slab surface to generate children
-    const ray = new T.Raycaster()
-    const pos = new T.Vector3()
-    const dir = new T.Vector3()
-
-    // temp storage for doing calculations
-    const vec = new T.Vector3()
-    const rot = new T.Quaternion()
 
     // gen child count
     const n = rock.genChildCount(depth)
@@ -88,7 +96,7 @@ export class Rock {
       const hb0 = hb[0]
 
       if (hb0 == null) {
-        console.error("couldn't find bottom of slab")
+        console.debug("couldn't find bottom of slab")
         continue
       }
 
@@ -135,7 +143,7 @@ export class Rock {
         // unit vector
         1.0,
         // in the generated range
-        this.genAngle() * Math.PI,
+        this.genAttitude() * Math.PI,
         // anywhere on the unit circle
         unlerp(rand(), 0.0, 2 * Math.PI),
       )
@@ -144,10 +152,14 @@ export class Rock {
       dir.applyQuaternion(rot)
 
       // gen child scale based on parent
-      const cs = slab.scl.x * rock.genScale()
+      const ps = slab.scl
+      const cs = this.genScale(
+        vec,
+        Math.min(ps.x, ps.y) * this.genShrink(),
+      )
 
       // translate pos so child is flush w/ this face
-      pos.addScaledVector(dir, cs * (0.5 - rock.genInset()))
+      pos.addScaledVector(dir, cs.y * (0.5 - rock.genInset()))
 
       // generate the child slab
       rock.gen(
@@ -155,7 +167,7 @@ export class Rock {
         new Slab(
           rock.genTaper(),
           pos,
-          cs, cs,
+          cs,
           dir,
           rock.genRoll(),
         )
@@ -197,11 +209,24 @@ export class Rock {
     return this.group
   }
 
+  genAspect() {
+    return unlerp(rand(), ...this.params.aspect)
+  }
+
   genTaper() {
     return unlerp(rand(), ...this.params.taper)
   }
 
-  genScale() {
+  genScale(v, base) {
+    // gen aspect ratio
+    const sx = base
+    const sy = base * this.genAspect()
+
+    // wrap it in the vector
+    return v.set(sx, sy, sx)
+  }
+
+  genShrink() {
     return unlerp(rand(), ...this.params.shrink)
   }
 
@@ -209,8 +234,8 @@ export class Rock {
     return unlerp(rand(), ...this.params.inset)
   }
 
-  genAngle() {
-    return unlerp(rand(), ...this.params.angle)
+  genAttitude() {
+    return unlerp(rand(), ...this.params.attitude)
   }
 
   genRoll() {

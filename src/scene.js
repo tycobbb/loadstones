@@ -57,7 +57,6 @@ export function init() {
 
 // -- commands --
 function sim() {
-  mRock.ref.rotation.y -= 0.005
 }
 
 function generate() {
