@@ -69,12 +69,13 @@ export class Rock {
     for (let i = 0; i < n; i++) {
       const outside = slab.scl.manhattanLength()
 
-      // move to a point below the slab
-      pos.copy(slab.pos)
-      pos.addScaledVector(slab.up, -outside)
-
       // looking upwards
       dir.copy(slab.up)
+      dir.applyQuaternion(slab.ref.quaternion)
+
+      // move to a point below the slab
+      pos.copy(slab.pos)
+      pos.addScaledVector(dir, -outside)
 
       // and raycast to find the bottom
       ray.set(pos, dir)
@@ -107,21 +108,11 @@ export class Rock {
 
       // and cast a ray back into it
       ray.set(pos, dir)
-      const hits = ray.intersectObject(slab.ref)
-      const hit = hits[0]
-
-      // // helper
-      // const arrow = new T.ArrowHelper(
-      //   ray.ray.direction,
-      //   ray.ray.origin,
-      //   20.0,
-      //   0x00ffff,
-      // )
-
-      // this.group.parent.add(arrow)
+      const hf = ray.intersectObject(slab.ref)
+      const hf0 = hf[0]
 
       // this shouldn't miss, but don't crash if we do
-      if (hit == null) {
+      if (hf0 == null) {
         console.error("couldn't find a face casting back into the slab")
         continue
       }
@@ -132,14 +123,13 @@ export class Rock {
 
       // dir.applyQuaternion(rock.group.quaternion)
 
-      // const nrm = new T.ArrowHelper(
-      //   dir,
-      //   pos,
-      //   2.0,
-      //   0xff00000,
-      // )
+      // get hf0 location, normal
+      pos.copy(hf0.point)
+      pos.applyMatrix4(slab.ref.matrix)
 
-      // this.group.parent.add(nrm)
+      // get normal direction
+      dir.copy(hf0.face.normal)
+      dir.applyQuaternion(slab.ref.quaternion)
 
       // gen child scale based on parent
       const cs = rock.genChildScale(slab)
@@ -164,7 +154,10 @@ export class Rock {
     const g = this.group
 
     for (const c of g.children) {
-      c.geometry.dispose()
+      const g = c.geometry
+      if (g != null) {
+        g.dispose()
+      }
     }
 
     g.clear()
@@ -173,6 +166,17 @@ export class Rock {
   // -- c/helpers
   add(slab) {
     this.group.add(slab.ref)
+  }
+
+  addDebugArrow(pos, dir, len) {
+    const slb = new T.ArrowHelper(
+      dir,
+      pos,
+      len,
+      0x000000,
+    )
+
+    this.group.add(slb)
   }
 
   // -- queries --

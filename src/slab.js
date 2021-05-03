@@ -23,6 +23,7 @@ export class Slab {
     mesh.position.copy(pos)
     mesh.scale.set(sw, sh, sw)
     mesh.quaternion.setFromUnitVectors(mesh.up, dir)
+    mesh.updateMatrix()
 
     // add mesh shadows
     mesh.castShadow = true

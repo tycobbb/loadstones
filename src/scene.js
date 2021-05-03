@@ -63,7 +63,7 @@ function rotate(translation) {
   mScene.rotation.y += translation * 0.01
 }
 
-function setParams({ emission, ...params }) {
+function setParams({ ["emissive-intensity"]: emission, ...params }) {
   // update params
   const prev = mParams
   mParams = params

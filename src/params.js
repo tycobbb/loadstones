@@ -17,7 +17,7 @@ const kOptions = Options.parse([
   { name: "child (count)", type: kTypes.IntRange, l: 5, r: 10, min: 0, step: 1 },
   { name: "child (decay)", type: kTypes.Int, val: 2, min: 0, step: 1 },
   { name: "child (shrink)", type: kTypes.FloatRange, l: 0.6, r: 0.8, val: 0.0, min: 0, step: 0.1 },
-  { name: "emission", type: kTypes.Float, val: 1.0, min: 0, max: 1.0, step: 0.1 },
+  { name: "emissive (intensity)", type: kTypes.Float, val: 1.0, min: 0, max: 1.0, step: 0.1 },
 ])
 
 const kNumberInput = (name, val, p) => `
