@@ -1,1 +1,1 @@
-loadstones aka prockgen
+[loadstones](https://tycobbb.github.io/loadstones) aka prockgen
