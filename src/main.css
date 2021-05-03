@@ -135,15 +135,11 @@ h2 {
   background-color: #ffffff55;
 }
 
-.Field-prompt, .Field-divider {
+.Field-prompt {
   margin-left: 5px;
   font-size: 0.85em;
   font-style: italic;
   letter-spacing: 1px;
-}
-
-.Field-divider {
-  margin-right: 5px;
 }
 
 input[type="checkbox"].Field-input {
@@ -158,6 +154,20 @@ input[type="checkbox"].Field-input:hover {
 
 input[type="checkbox"].Field-input:checked {
   background-color: white;
+}
+
+.Field-rangeDivider {
+  margin-right: 5px;
+  font-family: monospace;
+  cursor: pointer;
+}
+
+.Field-rangeDivider::after {
+  content: "..";
+}
+
+.Field-rangeDivider:hover::after {
+  content: "==";
 }
 
 /* Select */

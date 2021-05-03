@@ -15,6 +15,7 @@ const kOptions = Options.parse([
   { name: "depth", type: kTypes.Int, val: 1, min: 0 },
   { name: "taper", type: kTypes.FloatRange, l: 0.7, r: 0.9, min: 0, max: 1.0, step: 0.1 },
   { name: "shrink", type: kTypes.FloatRange, l: 0.6, r: 0.8, val: 0.0, min: 0, step: 0.1 },
+  { name: "inset", type: kTypes.FloatRange, l: 0, r: 0.1, val: 0.0, min: 0, step: 0.1 },
   { name: "children (count)", type: kTypes.IntRange, l: 5, r: 10, min: 0, step: 1 },
   { name: "children (decay)", type: kTypes.Int, val: 2, min: 0, step: 1 },
   { name: "emissive (intensity)", type: kTypes.Float, val: 1.0, min: 0, max: 1.0, step: 0.1 },
@@ -78,7 +79,7 @@ const kTemplate = `
 
         <div class="Field-line">
           ${kNumberInput(id, p.l, p)}
-          <p class="Field-divider">...</p>
+          <a class="Field-prompt Field-rangeDivider"></a>
           ${kNumberInput(id, p.r, p)}
         </div>
       </div>
@@ -95,6 +96,12 @@ export function init() {
   // render select
   $mParams = document.getElementById("params")
   $mParams.innerHTML = kTemplate
+
+  // check for clicks on range dividers
+  const $links = $mParams.querySelectorAll(".Field-rangeDivider")
+  for (const $link of $links) {
+    $link.addEventListener("click", didClickRangeDivider)
+  }
 
   // cache input
   $mFields = $mParams.querySelectorAll(".Field")
@@ -167,4 +174,31 @@ function getFloat(str, dsc) {
 
 function getRange(l, r) {
   return [Math.min(l, r), r]
+}
+
+// -- events --
+function didClickRangeDivider(evt) {
+  evt.preventDefault()
+
+  // find the field
+  let $field = evt.target
+  while ($field != null && !$field.classList.contains("Field")) {
+    $field = $field.parentElement
+  }
+
+  if ($field == null) {
+    console.error("no field for this range divider!")
+    return
+  }
+
+  // find the inputs
+  const $inputs = $field.querySelectorAll("input")
+  if ($inputs.length !== 2) {
+    console.error("range did't have two inputs!")
+    return
+  }
+
+  // set right input equal to left
+  $inputs[1].value = $inputs[0].value
+  $mParams.dispatchEvent(new InputEvent("input"))
 }
