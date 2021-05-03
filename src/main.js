@@ -77,13 +77,13 @@ function initEvents() {
   mColors.onChange(syncColors)
 
   // add mouse events
-  const $canvas = mView.ref
-  $canvas.addEventListener("pointerdown", didPressMouse)
-  $canvas.addEventListener("pointermove", didMoveMouse)
-  $canvas.addEventListener("pointerup", didReleaseMouse)
+  const $view = mView.ref
+  $view.addEventListener("pointerdown", didPressMouse)
+  $view.addEventListener("pointermove", didMoveMouse)
+  $view.addEventListener("pointerup", didReleaseMouse)
+  $view.addEventListener("wheel", didScrollWheel)
 
   // add other input events
-  document.addEventListener("wheel", didScrollWheel)
   document.addEventListener("keydown", didPressKey)
 
   // add misc events

@@ -50,9 +50,16 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-height: 100vh;
   opacity: 1.0;
   transition: opacity 0.05s;
   pointer-events: all;
+  overflow: scroll;
+  scrollbar-width: none;
+}
+
+.Main-gutter::-webkit-scrollbar {
+  display: none;
 }
 
 .Main.is-ui-hidden .Main-gutter {
