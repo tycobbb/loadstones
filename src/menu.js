@@ -1,4 +1,4 @@
-import { rb, ro } from "./utils.js"
+import { rb, ro, debounce } from "./utils.js"
 
 // -- constants --
 export const Types = {
@@ -128,13 +128,13 @@ export class Menu {
     m.fireInputEvent()
   }
 
-  onChange(action) {
+  onChange(action, delay = 0.0) {
     const m = this
     action(m.getValues())
 
-    m.$el.addEventListener("input", () => {
+    m.$el.addEventListener("input", debounce(() => {
       action(m.getValues())
-    })
+    }, delay))
   }
 
   // -- c/helpers

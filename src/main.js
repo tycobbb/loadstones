@@ -72,7 +72,7 @@ function toggleUi(isVisible) {
 // -- events --
 function initEvents() {
   // synchronize data
-  mParams.onChange(syncParams)
+  mParams.onChange(syncParams, 200)
   mMore.onChange(syncMore)
   mColors.onChange(syncColors)
 
