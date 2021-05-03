@@ -1,6 +1,6 @@
 import * as T from "../lib/three@0.128.0.min.js"
 import { Slab } from "./slab.js"
-import { unlerp } from "./utils.js"
+import { rand, unlerp } from "./utils.js"
 
 // -- impls --
 export class Rock {
@@ -52,30 +52,60 @@ export class Rock {
       return
     }
 
-    // grab parent attrs
-    const pp = slab.pos
-    const ps = slab.scl
+    // raycast points on the slab surface to generate children
+    const ray = new T.Raycaster()
+    const pos = new T.Vector3()
+    const dir = new T.Vector3()
 
-    // calc parent top, edge
-    const pt = pp.y + ps.y * 0.5
-    console.log(pp.x)
+    // generate n new slabs
+    for (let i = 0; i < 3; i++) {
+      // start inside the slab
+      pos.copy(slab.pos)
 
-    // calc child scale
-    const csx = ps.x * 0.5
-    const csy = ps.y * 0.5
-
-    // calc child top, edge
-    const ct = pt + csy * 0.5
-
-    rock.gen(
-      depth + 1,
-      new Slab(
-        rock.genTaper(),
-        pp.x, ct, pp.x,
-        csx, csy,
-        Math.PI / 8 * Math.random(), 2 * Math.PI * Math.random(), Math.PI / 8 * Math.random(),
+      // pick a random upwards, outwards ray
+      dir.setFromSphericalCoords(
+        // a distance outside the slab
+        20.0,
+        // anywhere on the unit circle
+        unlerp(rand(), 0.0, 2 * Math.PI),
+        // in the upper hemisphere
+        unlerp(rand(), -Math.PI, Math.PI),
       )
-    )
+
+      // project to a point outside the slab
+      pos.add(dir)
+
+      // point back towards the slab
+      dir.normalize().negate()
+
+      // and cast a ray into the slab
+      ray.set(pos, dir)
+      const hit = ray.intersectObject(slab.ref)[0]
+
+      // this shouldn't miss, but don't crash if we do
+      if (hit == null) {
+        continue
+      }
+
+      // get hit location, normal
+      const p = hit.point
+      const a = hit.face.normal
+
+      // gen child scale based on parent
+      const ps = slab.scl
+      const cs = ps.x * 0.5
+
+      // generate the child slab
+      rock.gen(
+        depth + 1,
+        new Slab(
+          rock.genTaper(),
+          p.x, p.y, p.z,
+          cs, cs,
+          a.x, a.y, a.z,
+        )
+      )
+    }
   }
 
   clear() {

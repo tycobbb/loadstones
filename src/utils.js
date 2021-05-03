@@ -1,18 +1,10 @@
 // -- impls --
-// deep-ish equality check
-export function equalish(l, r) {
-  for (const key in l) {
-    const li = l[key]
-    const ri = r[key]
+export function rand() {
+  return Math.random()
+}
 
-    if (li instanceof Object && !equalish(li, ri)) {
-      return false
-    } else if (li !== ri) {
-      return false
-    }
-  }
-
-  return true
+export function unlerp(val, min, max) {
+  return min + val * (max - min)
 }
 
 // -- i/rendering
@@ -26,11 +18,6 @@ export function rb(test, template) {
 
 export function ro(optional, template) {
   return rs(optional != null && template(optional))
-}
-
-// -- i/lerps
-export function unlerp(val, min, max) {
-  return min + val * (max - min)
 }
 
 // -- i/color
@@ -51,4 +38,21 @@ export function getRgbaFromHex(hex) {
     ((val & 0x0000FF) >> 0) / 255.0,
     1
   ]
+}
+
+// -- i/equality
+// deep-ish equality check
+export function equalish(l, r) {
+  for (const key in l) {
+    const li = l[key]
+    const ri = r[key]
+
+    if (li instanceof Object && !equalish(li, ri)) {
+      return false
+    } else if (li !== ri) {
+      return false
+    }
+  }
+
+  return true
 }
