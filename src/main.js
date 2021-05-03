@@ -2,6 +2,7 @@ import { loadEl } from "./load.js"
 import { init as initScene } from "./scene.js"
 import { init as initView } from "./view.js"
 import { init as initColors } from "./colors.js"
+import { init as initMore } from "./more.js"
 import { init as initParams } from "./params.js"
 
 // -- props -
@@ -13,8 +14,9 @@ let mIsDebug = false
 // -- p/components
 let mScene = null
 let mView = null
-let mColors = null
 let mParams = null
+let mMore = null
+let mColors = null
 
 // -- p/els
 let $mMain = null
@@ -30,8 +32,9 @@ function main() {
   // initialize
   mScene = initScene()
   mView = initView("view", mScene)
-  mColors = initColors()
   mParams = initParams()
+  mMore = initMore()
+  mColors = initColors()
   initEvents()
 
   // start loop
@@ -54,6 +57,10 @@ function syncParams(params) {
   mScene.setParams(params)
 }
 
+function syncMore(more) {
+  mScene.setMore(more)
+}
+
 function syncColors(colors) {
   mScene.setColors(colors)
 }
@@ -66,6 +73,7 @@ function toggleUi(isVisible) {
 function initEvents() {
   // synchronize data
   mParams.onChange(syncParams)
+  mMore.onChange(syncMore)
   mColors.onChange(syncColors)
 
   // add mouse events

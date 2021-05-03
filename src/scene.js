@@ -53,6 +53,7 @@ export function init() {
     rotate,
     setParams,
     setColors,
+    setMore,
     setDebug,
     getBounds,
     onGenerate,
@@ -75,19 +76,20 @@ function rotate(translation) {
   mRock.ref.rotation.y += translation * 0.01
 }
 
-function setParams({ ["emissive-intensity"]: emission, ...params }) {
-  // update params
-  const prev = mParams
-  mParams = params
-
-  // set emissivity
-  setEmission(emission)
-
-  // regenerate rock if necessary
-  if (prev == null || !equalish(prev, mParams)) {
-    mRock.setParams(mParams)
-    generate()
+function setParams(params) {
+  // ignore duplicate params
+  if (mParams != null && equalish(mParams, params)) {
+    return
   }
+
+  // regenerate rock
+  mParams = params
+  mRock.setParams(mParams)
+  generate()
+}
+
+function setMore(more) {
+  setEmission(more["emissive-intensity"])
 }
 
 function setColors(colors) {
