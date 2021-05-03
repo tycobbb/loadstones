@@ -39,6 +39,7 @@ export class Rock {
         new T.Vector3(0.0, 0.0, 0.0),
         rs, rs,
         new T.Vector3(0.0, 0.0, 0.0),
+        0.0,
       )
     )
   }
@@ -156,6 +157,7 @@ export class Rock {
           pos,
           cs, cs,
           dir,
+          rock.genRoll(),
         )
       )
     }
@@ -209,6 +211,10 @@ export class Rock {
 
   genAngle() {
     return unlerp(rand(), ...this.params.angle)
+  }
+
+  genRoll() {
+    return unlerp(rand(), ...this.params.roll)
   }
 
   genChildCount(level) {

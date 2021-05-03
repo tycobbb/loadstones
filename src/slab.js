@@ -13,6 +13,7 @@ export class Slab {
     pos,
     sw, sh,
     dir,
+    roll,
   ) {
     // build geometry
     const geometry = new SlabGeometry(taper)
@@ -22,6 +23,7 @@ export class Slab {
     mesh.position.copy(pos)
     mesh.scale.set(sw, sh, sw)
     mesh.quaternion.setFromUnitVectors(mesh.up, dir)
+    mesh.rotateOnAxis(mesh.up, roll)
     mesh.updateMatrix()
 
     // add mesh shadows
