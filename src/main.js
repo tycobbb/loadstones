@@ -70,8 +70,9 @@ function initEvents() {
 
   // add mouse events
   const $canvas = mView.ref()
-  $canvas.addEventListener("click", didClickMouse)
-  $canvas.addEventListener("mousemove", didMoveMouse)
+  $canvas.addEventListener("pointerdown", didPressMouse)
+  $canvas.addEventListener("pointermove", didMoveMouse)
+  $canvas.addEventListener("pointerup", didReleaseMouse)
 
   // add keyboard events
   document.addEventListener("keydown", didPressKey)
@@ -88,16 +89,43 @@ function initEvents() {
 }
 
 // -- e/mouse
-function didClickMouse(evt) {
-  console.debug(`[input] clicked`)
+let mGesture = null
+
+function didPressMouse(evt) {
+  mGesture = {
+    mousePos: {
+      x: evt.clientX,
+      y: evt.clientY,
+    },
+  }
 }
 
 function didMoveMouse(evt) {
+  if (mGesture == null) {
+    return
+  }
+
+  const m0 = mGesture.mousePos
+  const m1 = {
+    x: evt.clientX,
+    y: evt.clientY,
+  }
+
+  const tx = m1.x - m0.x
+  mScene.rotate(tx)
+
+  mGesture.mousePos = m1
+}
+
+function didReleaseMouse(evt) {
+  mGesture = null
 }
 
 // -- e/keyboard
 function didPressKey(evt) {
-  console.debug(`[input] pressed ${evt.key}`)
+  if (evt.key === "r") {
+    mScene.generate()
+  }
 }
 
 // -- e/misc

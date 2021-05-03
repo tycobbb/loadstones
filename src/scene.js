@@ -42,6 +42,8 @@ export function init() {
   return {
     ref,
     sim,
+    generate,
+    rotate,
     setParams,
     setColors,
     setDebug,
@@ -51,6 +53,14 @@ export function init() {
 // -- commands --
 function sim() {
   mRock.ref.rotation.y -= 0.005
+}
+
+function generate() {
+  mRock.generate()
+}
+
+function rotate(translation) {
+  mScene.rotation.y += translation * 0.01
 }
 
 function setParams({ emission, ...params }) {
@@ -64,7 +74,7 @@ function setParams({ emission, ...params }) {
   // regenerate rock if necessary
   if (prev == null || !equalish(prev, mParams)) {
     mRock.setParams(mParams)
-    mRock.generate()
+    generate()
   }
 }
 

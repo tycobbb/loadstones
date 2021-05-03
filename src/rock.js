@@ -29,16 +29,16 @@ export class Rock {
     rock.clear()
 
     // get initial scale
-    const s = rock.params.scale
+    const rs = rock.params.scale
 
     // and start over
     rock.gen(
       0,
       new Slab(
         rock.genTaper(),
-        0.0, 0.0, 0.0,
-        s, s,
-        0.0, 0.0, 0.0,
+        new T.Vector3(0.0, 0.0, 0.0),
+        rs, rs,
+        new T.Vector3(0.0, 0.0, 0.0),
       )
     )
   }
@@ -67,49 +67,94 @@ export class Rock {
 
     // gen n new slabs
     for (let i = 0; i < n; i++) {
-      // start inside the slab
-      pos.copy(slab.pos)
+      const outside = slab.scl.manhattanLength()
 
-      // pick a random upwards, outwards ray
+      // move to a point below the slab
+      pos.copy(slab.pos)
+      pos.addScaledVector(slab.up, -outside)
+
+      // looking upwards
+      dir.copy(slab.up)
+
+      // and raycast to find the bottom
+      ray.set(pos, dir)
+      const hb = ray.intersectObject(slab.ref)
+      const hb0 = hb[0]
+
+      if (hb0 == null) {
+        console.error("couldn't find bottom of slab")
+        continue
+      }
+
+      // now we'll start at the bottom of the slab
+      pos.copy(hb0.point)
+
+      // looking in a random upwards, outwards direction
       dir.setFromSphericalCoords(
         // a distance outside the slab
-        20.0,
+        outside,
+        // in the upper hemisphere
+        unlerp(rand(), -Math.PI / 2, Math.PI / 2),
         // anywhere on the unit circle
         unlerp(rand(), 0.0, 2 * Math.PI),
-        // in the upper hemisphere
-        unlerp(rand(), -Math.PI, Math.PI),
       )
 
-      // project to a point outside the slab
+      // move outside the slab in this direction
       pos.add(dir)
 
-      // point back towards the slab
+      // turn around to face the it
       dir.normalize().negate()
 
-      // and cast a ray into the slab
+      // and cast a ray back into it
       ray.set(pos, dir)
-      const hit = ray.intersectObject(slab.ref)[0]
+      const hits = ray.intersectObject(slab.ref)
+      const hit = hits[0]
+
+      // // helper
+      // const arrow = new T.ArrowHelper(
+      //   ray.ray.direction,
+      //   ray.ray.origin,
+      //   20.0,
+      //   0x00ffff,
+      // )
+
+      // this.group.parent.add(arrow)
 
       // this shouldn't miss, but don't crash if we do
       if (hit == null) {
+        console.error("couldn't find a face casting back into the slab")
         continue
       }
 
       // get hit location, normal
-      const p = hit.point
-      const a = hit.face.normal
+      pos.copy(hit.point)
+      dir.copy(hit.face.normal)
+
+      // dir.applyQuaternion(rock.group.quaternion)
+
+      // const nrm = new T.ArrowHelper(
+      //   dir,
+      //   pos,
+      //   2.0,
+      //   0xff00000,
+      // )
+
+      // this.group.parent.add(nrm)
 
       // gen child scale based on parent
       const cs = rock.genChildScale(slab)
+
+      // translate pos so child is flush w/ this face
+      pos.addScaledVector(dir, cs / 2.0)
 
       // generate the child slab
       rock.gen(
         depth + 1,
         new Slab(
           rock.genTaper(),
-          p.x, p.y, p.z,
+          pos,
           cs, cs,
-          a.x, a.y, a.z,
+          dir,
         )
       )
     }

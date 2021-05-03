@@ -10,18 +10,19 @@ export class Slab {
   // -- lifetime --
   constructor(
     taper,
-    px, py, pz,
+    pos,
     sw, sh,
-    ax, ay, az,
+    dir,
   ) {
     // build geometry
     const geometry = new SlabGeometry(taper)
+    // const geometry = new T.BoxGeometry()
 
     // build mesh
     const mesh = new T.Mesh(geometry, material().ref)
-    mesh.position.set(px, py, pz)
+    mesh.position.copy(pos)
     mesh.scale.set(sw, sh, sw)
-    mesh.rotation.set(ax, ay, az)
+    mesh.quaternion.setFromUnitVectors(mesh.up, dir)
 
     // add mesh shadows
     mesh.castShadow = true
@@ -32,16 +33,20 @@ export class Slab {
   }
 
   // -- queries --
+  get ref() {
+    return this.mesh
+  }
+
+  get up() {
+    return this.mesh.up
+  }
+
   get pos() {
     return this.mesh.position
   }
 
   get scl() {
     return this.mesh.scale
-  }
-
-  get ref() {
-    return this.mesh
   }
 }
 
