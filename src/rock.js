@@ -28,13 +28,16 @@ export class Rock {
     // clear any extant slabs
     rock.clear()
 
+    // get initial scale
+    const s = rock.params.scale
+
     // and start over
     rock.gen(
       0,
       new Slab(
         rock.genTaper(),
         0.0, 0.0, 0.0,
-        1.0, 1.0,
+        s, s,
         0.0, 0.0, 0.0,
       )
     )
