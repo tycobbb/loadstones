@@ -1,8 +1,5 @@
 import { Options } from "./options.js"
-import { Menu } from "./menu.js"
-
-// -- constants --
-const T = Menu.Types
+import { Menu, Types } from "./menu.js"
 
 // -- props --
 let mMenu = null
@@ -17,7 +14,7 @@ export function init() {
   mMenu = new Menu("more",
     Options.parse([{
       name: "emissive (intensity)",
-      type: T.Float,
+      type: Types.Float,
       val: 1.0, min: 0, max: 1.0, step: 0.1
     }])
   )

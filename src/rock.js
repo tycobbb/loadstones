@@ -18,8 +18,8 @@ const zero = new T.Vector3()
 // -- impls --
 export class Rock {
   // -- props --
-  group = null
-  params = null
+  // group = null
+  // params = null
 
   // -- lifetime --
   constructor() {

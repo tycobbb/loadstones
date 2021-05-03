@@ -1,22 +1,23 @@
 import { rb, ro } from "./utils.js"
 
+// -- constants --
+export const Types = {
+  Bool: 0,
+  Int: 1,
+  Float: 2,
+  IntRange: 3,
+  FloatRange: 4,
+}
+
 // -- impls --
 export class Menu {
-  // -- constants --
-  static Types = {
-    Bool: 0,
-    Int: 1,
-    Float: 2,
-    IntRange: 3,
-    FloatRange: 4,
-  }
 
   // -- props --
-  options = null
+  // options = null
 
   // -- p/elements
-  $el = null
-  $fields = null
+  // $el = null
+  // $fields = null
 
   // -- lifetime --
   constructor(id, options) {
@@ -42,11 +43,10 @@ export class Menu {
   // -- l/render
   render() {
     const m = this
-    const T = Menu.Types
 
     return `
       ${m.options.render(({ id, name, type, ...p }) => `
-        ${rb(type == T.Bool, () => `
+        ${rb(type == Types.Bool, () => `
           <div class="Field" data-name=${id}>
             <label
               for="${id}"
@@ -67,7 +67,7 @@ export class Menu {
             </div>
           </div>
         `)}
-        ${rb(type == T.Int || type == T.Float, () => `
+        ${rb(type == Types.Int || type == Types.Float, () => `
           <div class="Field" data-name=${id}>
             <label
               for="${id}"
@@ -79,7 +79,7 @@ export class Menu {
             ${m.renderNumberInput(id, p.val, p)}
           </div>
         `)}
-        ${rb(type == T.IntRange || type == T.FloatRange, () => `
+        ${rb(type == Types.IntRange || type == Types.FloatRange, () => `
           <div class="Field" data-name=${id}>
             <label
               for="${id}"
@@ -139,19 +139,18 @@ export class Menu {
 
   // -- c/helpers
   setValue($field, dsc, val) {
-    const T = Menu.Types
     const $inputs = $field.querySelectorAll("input")
 
     switch (dsc.type) {
-      case T.Bool:
+      case Types.Bool:
         $inputs[0].checked = val
         break
-      case T.Int:
-      case T.Float:
+      case Types.Int:
+      case Types.Float:
         $inputs[0].value = val
         break
-      case T.IntRange:
-      case T.FloatRange:
+      case Types.IntRange:
+      case Types.FloatRange:
         $inputs[0].value = val[0]
         $inputs[1].value = val[1]
         break;
@@ -181,26 +180,25 @@ export class Menu {
   // -- q/helpers
   getValue($field, dsc) {
     const m = this
-    const T = Menu.Types
     const $inputs = $field.querySelectorAll("input")
 
     switch (dsc.type) {
-      case T.Bool:
+      case Types.Bool:
         return $inputs[0].checked
-      case T.Int:
+      case Types.Int:
         return m.getInt(
           $inputs[0].value, dsc
         )
-      case T.Float:
+      case Types.Float:
         return m.getFloat(
           $inputs[0].value, dsc
         )
-      case T.IntRange:
+      case Types.IntRange:
         return m.getRange(
           m.getInt($inputs[0].value, dsc),
           m.getInt($inputs[1].value, dsc),
         )
-      case T.FloatRange:
+      case Types.FloatRange:
         return m.getRange(
           m.getFloat($inputs[0].value, dsc),
           m.getFloat($inputs[1].value, dsc),

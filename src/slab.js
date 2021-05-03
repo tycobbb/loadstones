@@ -5,7 +5,7 @@ import { material } from "./material.js"
 export class Slab {
   // -- props --
   // the backing mesh, access this through `ref`
-  mesh = null
+  // mesh = null
 
   // -- lifetime --
   constructor(

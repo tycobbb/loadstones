@@ -4,7 +4,7 @@ import * as T from "../lib/three@0.128.0.min.js"
 export class Floor {
   // -- props --
   // the backing mesh, access this through `ref`
-  mesh = null
+  // mesh = null
 
   // -- lifetime --
   constructor() {

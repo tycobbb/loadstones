@@ -151,6 +151,7 @@ h2 {
 
 input[type="checkbox"].Field-input {
   appearance: none;
+  -webkit-appearance: none;
   margin: 0;
   width: 18px;
 }
@@ -196,12 +197,18 @@ input[type="checkbox"].Field-input:checked {
 .Select-input {
   flex: 1;
   appearance: none;
+  -webkit-appearance: none;
   border: none;
   padding: 0;
-  margin-left: -4px;
-  margin-top: 2px;
   font-family: unset;
   background-color: unset;
+}
+
+@-moz-document url-prefix() {
+  .Select-input {
+    margin-top: 2px;
+    margin-left: -4px;
+  }
 }
 
 /* Button */
@@ -243,6 +250,7 @@ input[type="checkbox"].Field-input:checked {
   width: 100%;
   height: 19.2px;
   appearance: none;
+  -webkit-appearance: none;
   background: none;
   border: 0;
   padding: 0;
