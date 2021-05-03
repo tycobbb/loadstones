@@ -12,6 +12,8 @@ let mLight = null
 let mParams = null
 let mColors = null
 let mHelpers = []
+let mDelegate = null
+let mBounds = new T.Box3()
 
 // -- lifetime --
 export function init() {
@@ -45,13 +47,15 @@ export function init() {
 
   // export module
   return {
-    ref,
+    get ref() { return mScene },
     sim,
     generate,
     rotate,
     setParams,
     setColors,
     setDebug,
+    getBounds,
+    onGenerate,
   }
 }
 
@@ -61,6 +65,10 @@ function sim() {
 
 function generate() {
   mRock.generate()
+
+  if (mDelegate != null) {
+    mDelegate()
+  }
 }
 
 function rotate(translation) {
@@ -123,6 +131,12 @@ function addHelper(helper) {
 }
 
 // -- queries --
-function ref() {
-  return mScene
+function getBounds() {
+  mBounds.setFromObject(mRock.ref)
+  return mBounds
+}
+
+// -- events --
+function onGenerate(delegate) {
+  mDelegate = delegate
 }

@@ -69,12 +69,13 @@ function initEvents() {
   mColors.onChange(syncColors)
 
   // add mouse events
-  const $canvas = mView.ref()
+  const $canvas = mView.ref
   $canvas.addEventListener("pointerdown", didPressMouse)
   $canvas.addEventListener("pointermove", didMoveMouse)
   $canvas.addEventListener("pointerup", didReleaseMouse)
 
-  // add keyboard events
+  // add other input events
+  document.addEventListener("wheel", didScrollWheel)
   document.addEventListener("keydown", didPressKey)
 
   // add misc events
@@ -121,7 +122,11 @@ function didReleaseMouse(evt) {
   mGesture = null
 }
 
-// -- e/keyboard
+// -- e/inputs
+function didScrollWheel(evt) {
+  mView.zoom(evt.deltaY)
+}
+
 function didPressKey(evt) {
   if (evt.key === "r") {
     mScene.generate()

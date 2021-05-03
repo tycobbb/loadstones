@@ -1,9 +1,12 @@
 import * as T from "../lib/three@0.128.0.min.js"
+import { debounce } from "./utils.js"
 
 // -- constants --
 const kFov = 75
 const kNearPlane = 0.1
 const kFarPlane = 1000.0
+const kInitialZoom = 5.0
+const kDirection = new T.Vector3(0.0, 2.0, 5.0).normalize()
 
 // -- deps --
 let mScene = null
@@ -11,6 +14,7 @@ let mScene = null
 // -- props --
 let mCamera = null
 let mRenderer = null
+let mZoom = kInitialZoom
 
 // -- p/elements
 let $mEl = null
@@ -41,8 +45,7 @@ export function init(id, scene) {
   )
 
   // position camera
-  mCamera.position.set(0.0, 2.0, 5.0)
-  mCamera.lookAt(0.0, 0.0, 0.0)
+  zoom(0.0)
 
   // create renderer
   mRenderer = new T.WebGLRenderer()
@@ -54,17 +57,26 @@ export function init(id, scene) {
   $mEl.appendChild(mRenderer.domElement)
 
   return {
-    ref,
+    get ref() { return $mEl },
     draw,
+    zoom,
   }
 }
 
 // -- commands --
 function draw() {
-  mRenderer.render(mScene.ref(), mCamera)
+  mRenderer.render(mScene.ref, mCamera)
 }
 
-// -- queries --
-function ref() {
-  return $mEl
+function zoom(translation) {
+  mZoom += translation * 0.01
+  if (mZoom < 0.0) {
+    mZoom = 0.0
+  }
+
+  const pos = mCamera.position
+  pos.setScalar(0.0)
+  pos.addScaledVector(kDirection, mZoom)
+
+  mCamera.lookAt(0.0, 0.5 + (mZoom / kInitialZoom - 1.0), 0.0)
 }

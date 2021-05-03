@@ -7,6 +7,20 @@ export function unlerp(val, min, max) {
   return min + val * (max - min)
 }
 
+// -- i/fns
+export function debounce(action, delay) {
+  let id = null
+
+  return function debounced(...args) {
+    clearTimeout(id)
+
+    id = setTimeout(() => {
+      id = null
+      action(...args)
+    }, delay)
+  }
+}
+
 // -- i/rendering
 export function rs(value) {
   return value ? value : ""
