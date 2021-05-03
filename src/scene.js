@@ -55,6 +55,7 @@ export function init() {
     setColors,
     setMore,
     setDebug,
+    setShadows,
     getBounds,
     onGenerate,
   }
@@ -119,6 +120,12 @@ function setEmission(emission) {
 export function setDebug(isDebug) {
   for (const helper of mHelpers) {
     helper.visible = isDebug
+  }
+}
+
+function setShadows(isShadowed) {
+  for (const obj of mRock.children) {
+    obj.receiveShadow = isShadowed
   }
 }
 

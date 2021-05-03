@@ -29,7 +29,7 @@ export class Slab {
 
     // add mesh shadows
     mesh.castShadow = true
-    mesh.receiveShadow = true
+    mesh.receiveShadow = false
 
     // store mesh
     this.mesh = mesh

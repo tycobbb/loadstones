@@ -10,6 +10,7 @@ let mTime = null
 let mFrame = 0
 let mIsPaused = false
 let mIsDebug = false
+let mIsShadowed = false
 
 // -- p/components
 let mScene = null
@@ -98,6 +99,9 @@ function initEvents() {
 
   const $clear = document.getElementById("clear")
   $clear.addEventListener("click", didClickClear)
+
+  const $shadows = document.getElementById("shadows")
+  $shadows.addEventListener("click", didClickShadows)
 }
 
 // -- e/mouse
@@ -162,6 +166,12 @@ function didClickDebug(evt) {
 
 function didClickClear(evt) {
   mParams.clear()
+}
+
+function didClickShadows(evt) {
+  mIsShadowed = !mIsShadowed
+  setButtonTitle(evt.currentTarget, mIsShadowed ? "no shadows" : "shadows")
+  mScene.setShadows(mIsShadowed)
 }
 
 function setButtonTitle($el, title) {

@@ -203,6 +203,10 @@ export class Rock {
     return this.group
   }
 
+  get children() {
+    return this.group.children
+  }
+
   genAspect() {
     return unlerp(rand(), ...this.params.aspect)
   }
