@@ -80,7 +80,7 @@ export class Rock {
 
     // gen n new slabs
     for (let i = 0; i < n; i++) {
-      const outside = slab.scl.manhattanLength()
+      const outside = slab.scale.manhattanLength()
 
       // looking upwards
       dir.copy(slab.up)
@@ -91,17 +91,14 @@ export class Rock {
       pos.addScaledVector(dir, -outside)
 
       // and raycast to find the bottom
-      ray.set(pos, dir)
-      const hb = ray.intersectObject(slab.ref)
-      const hb0 = hb[0]
-
-      if (hb0 == null) {
+      const hb = rock.cast(pos, dir, slab)
+      if (hb == null) {
         console.debug("couldn't find bottom of slab")
         continue
       }
 
       // now we'll start at the bottom of the slab
-      pos.copy(hb0.point)
+      pos.copy(hb.point)
 
       // looking in a random upwards, outwards direction
       dir.setFromSphericalCoords(
@@ -117,22 +114,20 @@ export class Rock {
       dir.normalize().negate()
 
       // and cast a ray back into it
-      ray.set(pos, dir)
-      const hf = ray.intersectObject(slab.ref)
-      const hf0 = hf[0]
+      const hf = rock.cast(pos, dir, slab)
 
       // this shouldn't miss, but don't crash if we do
-      if (hf0 == null) {
+      if (hf == null) {
         console.error("couldn't find a face casting back into the slab")
         continue
       }
 
       // get pos from hit location in rock space
-      pos.copy(hf0.point)
+      pos.copy(hf.point)
       pos.applyMatrix4(slab.ref.matrix)
 
       // get dir from normal in rock space
-      dir.copy(hf0.face.normal)
+      dir.copy(hf.face.normal)
       dir.applyQuaternion(slab.ref.quaternion)
 
       // add some jitter the dir
@@ -142,11 +137,13 @@ export class Rock {
         unlerp(rand(), 0.0, 2.0) * Math.PI,
       )
 
+      // rot.setFromUnitVectors(T.Object3D.DefaultUp, vec)
+      // dir.applyQuaternion(rot)
       rot.setFromUnitVectors(T.Object3D.DefaultUp, vec)
       dir.applyQuaternion(rot)
 
       // gen child scale based on parent
-      const ps = slab.scl
+      const ps = slab.scale
       const cs = this.genScale(
         vec,
         Math.min(ps.x, ps.y) * this.genShrink(),
@@ -185,6 +182,11 @@ export class Rock {
   // -- c/helpers
   add(slab) {
     this.group.add(slab.ref)
+  }
+
+  cast(pos, dir, slab) {
+    ray.set(pos, dir)
+    return ray.intersectObject(slab.ref)[0]
   }
 
   addDebugArrow(pos, dir, len) {

@@ -47,7 +47,7 @@ export class Slab {
     return this.mesh.position
   }
 
-  get scl() {
+  get scale() {
     return this.mesh.scale
   }
 }
