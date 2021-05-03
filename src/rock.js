@@ -105,12 +105,9 @@ export class Rock {
 
       // looking in a random upwards, outwards direction
       dir.setFromSphericalCoords(
-        // a distance outside the slab
         outside,
-        // in the upper hemisphere
-        unlerp(rand(), -Math.PI / 2, Math.PI / 2),
-        // anywhere on the unit circle
-        unlerp(rand(), 0.0, 2 * Math.PI),
+        this.genCone(),
+        this.genSweep(),
       )
 
       // move outside the slab in this direction
@@ -140,11 +137,8 @@ export class Rock {
 
       // add some jitter the dir
       vec.setFromSphericalCoords(
-        // unit vector
         1.0,
-        // in the generated range
         this.genAttitude() * Math.PI,
-        // anywhere on the unit circle
         unlerp(rand(), 0.0, 2 * Math.PI),
       )
 
@@ -240,6 +234,14 @@ export class Rock {
 
   genRoll() {
     return unlerp(rand(), ...this.params.roll)
+  }
+
+  genCone() {
+    return unlerp(rand(), ...this.params.cone)
+  }
+
+  genSweep() {
+    return unlerp(rand(), ...this.params.sweep)
   }
 
   genChildCount(level) {
