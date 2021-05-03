@@ -44,6 +44,7 @@ export function init() {
     sim,
     setParams,
     setColors,
+    setDebug,
   }
 }
 
@@ -52,13 +53,12 @@ function sim() {
   mRock.ref.rotation.y -= 0.005
 }
 
-function setParams({ debug, emission, ...params }) {
+function setParams({ emission, ...params }) {
   // update params
   const prev = mParams
   mParams = params
 
-  // enable debugging tools if necessary
-  setDebug(debug)
+  // set emissivity
   setEmission(emission)
 
   // regenerate rock if necessary
@@ -92,7 +92,7 @@ function setEmission(emission) {
 }
 
 // -- c/debug
-function setDebug(isDebug) {
+export function setDebug(isDebug) {
   for (const helper of mHelpers) {
     helper.visible = isDebug
   }

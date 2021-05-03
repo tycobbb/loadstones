@@ -17,7 +17,6 @@ const kOptions = Options.parse([
   { name: "child (count)", type: kTypes.IntRange, l: 5, r: 10, min: 0, step: 1 },
   { name: "child (decay)", type: kTypes.Int, val: 2, min: 0, step: 1 },
   { name: "child (shrink)", type: kTypes.FloatRange, l: 0.6, r: 0.8, val: 0.0, min: 0, step: 0.1 },
-  { name: "debug", type: kTypes.Bool, prompt: "enabled?" },
 ])
 
 const kNumberInput = (name, val, p) => `

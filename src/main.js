@@ -8,6 +8,7 @@ import { init as initParams } from "./params.js"
 let mTime = null
 let mFrame = 0
 let mIsPaused = false
+let mIsDebug = false
 
 // -- p/components
 let mScene = null
@@ -81,6 +82,9 @@ function initEvents() {
 
   const $pause = document.getElementById("pause")
   $pause.addEventListener("click", didClickPause)
+
+  const $debug = document.getElementById("debug")
+  $debug.addEventListener("click", didClickDebug)
 }
 
 // -- e/mouse
@@ -103,8 +107,18 @@ function didClickUiToggle(_evt) {
 
 function didClickPause(evt) {
   mIsPaused = !mIsPaused
-  const $el = evt.target
-  $el.text = mIsPaused ? "unpause" : "pause"
+  setButtonTitle(evt.currentTarget, mIsPaused ? "unpause" : "pause")
+}
+
+function didClickDebug(evt) {
+  mIsDebug = !mIsDebug
+  setButtonTitle(evt.currentTarget, mIsDebug ? "no debug" : "debug")
+  mScene.setDebug(mIsDebug)
+}
+
+function setButtonTitle($el, title) {
+  const $title = $el.querySelector(".Button-text")
+  $title.innerText = title
 }
 
 // -- boostrap --
