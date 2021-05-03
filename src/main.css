@@ -101,7 +101,7 @@ h2 {
 }
 
 .Options-group + .Options-group {
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 /* Field */
@@ -191,6 +191,10 @@ input[type="checkbox"].Field-input:checked {
   padding: 2px 0px;
   border-bottom: 1px transparent dotted;
   cursor: pointer;
+}
+
+.Button-icon {
+  font-family: monospace;
 }
 
 .Button:hover {

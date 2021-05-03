@@ -63,8 +63,7 @@ function setParams({ debug, emission, ...params }) {
 
   // regenerate rock if necessary
   if (prev == null || !equalish(prev, mParams)) {
-    mRock.setDepth(mParams.levels)
-    mRock.setTaper(mParams.taper)
+    mRock.setParams(mParams)
     mRock.generate()
   }
 }

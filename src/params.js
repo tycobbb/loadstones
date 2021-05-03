@@ -11,15 +11,17 @@ const kTypes = {
 }
 
 const kOptions = Options.parse([
-  { name: "debug", type: kTypes.Bool, prompt: "enabled?" },
   { name: "emission", type: kTypes.Float, val: 1.0, min: 0, max: 1.0, step: 0.1 },
-  { name: "levels", type: kTypes.Int, val: 0, min: 0 },
+  { name: "depth", type: kTypes.Int, val: 0, min: 0 },
   { name: "taper", type: kTypes.FloatRange, l: 0.7, r: 0.9, min: 0, max: 1.0, step: 0.01 },
+  { name: "child (count)", type: kTypes.IntRange, l: 5, r: 10, min: 0, step: 1 },
+  { name: "child (decay)", type: kTypes.Int, val: 2, min: 0, step: 1 },
+  { name: "child (shrink)", type: kTypes.FloatRange, l: 0.6, r: 0.8, val: 0.0, min: 0, step: 0.1 },
+  { name: "debug", type: kTypes.Bool, prompt: "enabled?" },
 ])
 
 const kNumberInput = (name, val, p) => `
   <input
-    id="${name}"
     class="Field-input"
     name="${name}"
     type="number"
@@ -31,11 +33,11 @@ const kNumberInput = (name, val, p) => `
 `
 
 const kTemplate = `
-  ${kOptions.render(({ name, type, ...p }) => `
+  ${kOptions.render(({ id, name, type, ...p }) => `
     ${rb(type == kTypes.Bool, () => `
-      <div class="Field" data-name=${name}>
+      <div class="Field" data-name=${id}>
         <label
-          for="${name}"
+          for="${id}"
           class="Field-title"
         >
           ${name}
@@ -43,9 +45,9 @@ const kTemplate = `
 
         <div class="Field-line">
           <input
-            id="${name}"
+            id="${id}"
             class="Field-input"
-            name="${name}"
+            name="${id}"
             type="checkbox"
           >
 
@@ -54,30 +56,30 @@ const kTemplate = `
       </div>
     `)}
     ${rb(type == kTypes.Int || type == kTypes.Float, () => `
-      <div class="Field" data-name=${name}>
+      <div class="Field" data-name=${id}>
         <label
-          for="${name}"
+          for="${id}"
           class="Field-title"
         >
           ${name}
         </label>
 
-        ${kNumberInput(name, p.val, p)}
+        ${kNumberInput(id, p.val, p)}
       </div>
     `)}
     ${rb(type == kTypes.IntRange || type == kTypes.FloatRange, () => `
-      <div class="Field" data-name=${name}>
+      <div class="Field" data-name=${id}>
         <label
-          for="${name}"
+          for="${id}"
           class="Field-title"
         >
           ${name}
         </label>
 
         <div class="Field-line">
-          ${kNumberInput(name, p.l, p)}
+          ${kNumberInput(id, p.l, p)}
           <p class="Field-divider">...</p>
-          ${kNumberInput(name, p.r, p)}
+          ${kNumberInput(id, p.r, p)}
         </div>
       </div>
     `)}
@@ -140,15 +142,15 @@ function getDataFromField($field, dsc) {
         $inputs[0].value, dsc
       )
     case kTypes.IntRange:
-      return [
+      return getRange(
         getInt($inputs[0].value, dsc),
         getInt($inputs[1].value, dsc),
-      ]
+      )
     case kTypes.FloatRange:
-      return [
+      return getRange(
         getFloat($inputs[0].value, dsc),
         getFloat($inputs[1].value, dsc),
-      ]
+      )
   }
 }
 
@@ -161,4 +163,8 @@ function getFloat(str, dsc) {
   let min = dsc.min || Number.MIN_VALUE
   let max = dsc.max || Number.MAX_VALUE
   return Math.min(Math.max(val, min), max)
+}
+
+function getRange(l, r) {
+  return [Math.min(l, r), r]
 }

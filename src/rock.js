@@ -6,8 +6,7 @@ import { rand, unlerp } from "./utils.js"
 export class Rock {
   // -- props --
   group = null
-  depth = 0
-  taper = [1.0, 1.0]
+  params = null
 
   // -- lifetime --
   constructor() {
@@ -48,7 +47,7 @@ export class Rock {
     rock.add(slab)
 
     // bottom out
-    if (depth == rock.depth) {
+    if (depth == rock.params.depth) {
       return
     }
 
@@ -57,8 +56,14 @@ export class Rock {
     const pos = new T.Vector3()
     const dir = new T.Vector3()
 
-    // generate n new slabs
-    for (let i = 0; i < 3; i++) {
+    // gen child count
+    const n = rock.genChildCount(depth)
+    if (n === 0) {
+      return
+    }
+
+    // gen n new slabs
+    for (let i = 0; i < n; i++) {
       // start inside the slab
       pos.copy(slab.pos)
 
@@ -92,8 +97,7 @@ export class Rock {
       const a = hit.face.normal
 
       // gen child scale based on parent
-      const ps = slab.scl
-      const cs = ps.x * 0.5
+      const cs = rock.genChildScale(slab)
 
       // generate the child slab
       rock.gen(
@@ -129,19 +133,22 @@ export class Rock {
   }
 
   genTaper() {
-    return unlerp(Math.random(), ...this.taper)
+    return unlerp(rand(), ...this.params.taper)
+  }
+
+  genChildCount(level) {
+    let count = unlerp(rand(), ...this.params["child-count"])
+    count -= level * this.params["child-decay"]
+    return Math.max(count, 0)
+  }
+
+  genChildScale(slab) {
+    const scale = unlerp(rand(), ...this.params["child-shrink"])
+    return slab.scl.x * scale
   }
 
   // -- config --
-  setDepth(depth) {
-    this.depth = depth || 0
-  }
-
-  setTaper(taper) {
-    this.taper = taper || [1.0, 1.0]
-  }
-
-  setColors(colors) {
-    this.colors = colors
+  setParams(params) {
+    this.params = params
   }
 }
