@@ -16,7 +16,6 @@ export class Slab {
   ) {
     // build geometry
     const geometry = new SlabGeometry(taper)
-    // const geometry = new T.BoxGeometry()
 
     // build mesh
     const mesh = new T.Mesh(geometry, material().ref)

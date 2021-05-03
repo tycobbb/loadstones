@@ -126,10 +126,10 @@ export class Rock {
       dir.applyQuaternion(slab.ref.quaternion)
 
       // gen child scale based on parent
-      const cs = rock.genChildScale(slab)
+      const cs = slab.scl.x * rock.genScale()
 
       // translate pos so child is flush w/ this face
-      pos.addScaledVector(dir, cs / 2.0)
+      pos.addScaledVector(dir, cs * (0.5 - rock.genInset()))
 
       // generate the child slab
       rock.gen(
@@ -182,15 +182,18 @@ export class Rock {
     return unlerp(rand(), ...this.params.taper)
   }
 
+  genScale() {
+    return unlerp(rand(), ...this.params.shrink)
+  }
+
+  genInset() {
+    return unlerp(rand(), ...this.params.inset)
+  }
+
   genChildCount(level) {
     let count = unlerp(rand(), ...this.params["children-count"])
     count -= level * this.params["children-decay"]
     return Math.max(count, 0)
-  }
-
-  genChildScale(slab) {
-    const scale = unlerp(rand(), ...this.params.shrink)
-    return slab.scl.x * scale
   }
 
   // -- config --
