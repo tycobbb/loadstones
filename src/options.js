@@ -13,6 +13,10 @@ export class Options {
     return this.options[key]
   }
 
+  all() {
+    return Object.values(this.options)
+  }
+
   render(action) {
     return Object.values(this.options).map(action).join("")
   }

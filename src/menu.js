@@ -89,9 +89,9 @@ export class Menu {
             </label>
 
             <div class="Field-line">
-              ${m.renderNumberInput(id, p.l, p)}
+              ${m.renderNumberInput(id, p.val[0], p)}
               <a class="Field-prompt Field-rangeDivider"></a>
-              ${m.renderNumberInput(id, p.r, p)}
+              ${m.renderNumberInput(id, p.val[1], p)}
             </div>
           </div>
         `)}
@@ -114,17 +114,57 @@ export class Menu {
   }
 
   // -- commands --
+  clear() {
+    const m = this
+
+    for (const $field of m.$fields) {
+      const key = $field.dataset.name
+      const dsc = m.options.get(key)
+      const val = dsc.clear != null ? dsc.clear : dsc.val
+
+      m.setValue($field, dsc, val)
+    }
+
+    m.fireInputEvent()
+  }
+
   onChange(action) {
     const m = this
-    action(m.getData())
+    action(m.getValues())
 
     m.$el.addEventListener("input", () => {
-      action(m.getData())
+      action(m.getValues())
     })
   }
 
+  // -- c/helpers
+  setValue($field, dsc, val) {
+    const T = Menu.Types
+    const $inputs = $field.querySelectorAll("input")
+
+    switch (dsc.type) {
+      case T.Bool:
+        $inputs[0].checked = val
+        break
+      case T.Int:
+      case T.Float:
+        $inputs[0].value = val
+        break
+      case T.IntRange:
+      case T.FloatRange:
+        $inputs[0].value = val[0]
+        $inputs[1].value = val[1]
+        break;
+    }
+  }
+
+  fireInputEvent() {
+    const m = this
+    m.$el.dispatchEvent(new InputEvent("input"))
+  }
+
   // -- queries --
-  getData() {
+  getValues() {
     const m = this
     const data = {}
 
@@ -132,13 +172,14 @@ export class Menu {
     for (const $field of m.$fields) {
       const key = $field.dataset.name
       const dsc = m.options.get(key)
-      data[key] = m.getDataFromField($field, dsc)
+      data[key] = m.getValue($field, dsc)
     }
 
     return data
   }
 
-  getDataFromField($field, dsc) {
+  // -- q/helpers
+  getValue($field, dsc) {
     const m = this
     const T = Menu.Types
     const $inputs = $field.querySelectorAll("input")
@@ -167,6 +208,10 @@ export class Menu {
     }
   }
 
+  getRange(l, r) {
+    return [Math.min(l, r), r]
+  }
+
   getInt(str, dsc) {
     const m = this
     return Math.trunc(m.getFloat(str, dsc))
@@ -177,10 +222,6 @@ export class Menu {
     let min = dsc.min || Number.MIN_VALUE
     let max = dsc.max || Number.MAX_VALUE
     return Math.min(Math.max(val, min), max)
-  }
-
-  getRange(l, r) {
-    return [Math.min(l, r), r]
   }
 
   // -- events --
@@ -210,6 +251,6 @@ export class Menu {
 
     // set right input equal to left
     $inputs[1].value = $inputs[0].value
-    m.$el.dispatchEvent(new InputEvent("input"))
+    m.fireInputEvent()
   }
 }

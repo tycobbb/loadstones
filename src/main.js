@@ -95,6 +95,9 @@ function initEvents() {
 
   const $debug = document.getElementById("debug")
   $debug.addEventListener("click", didClickDebug)
+
+  const $clear = document.getElementById("clear")
+  $clear.addEventListener("click", didClickClear)
 }
 
 // -- e/mouse
@@ -155,6 +158,10 @@ function didClickDebug(evt) {
   mIsDebug = !mIsDebug
   setButtonTitle(evt.currentTarget, mIsDebug ? "no debug" : "debug")
   mScene.setDebug(mIsDebug)
+}
+
+function didClickClear(evt) {
+  mParams.clear()
 }
 
 function setButtonTitle($el, title) {
