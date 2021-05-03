@@ -137,8 +137,6 @@ export class Rock {
         unlerp(rand(), 0.0, 2.0) * Math.PI,
       )
 
-      // rot.setFromUnitVectors(T.Object3D.DefaultUp, vec)
-      // dir.applyQuaternion(rot)
       rot.setFromUnitVectors(T.Object3D.DefaultUp, vec)
       dir.applyQuaternion(rot)
 

@@ -18,13 +18,8 @@ export function material() {
   })
 
   mInstance = {
-    get ref() { return getRef() },
+    get ref() { return mMaterial },
   }
 
   return mInstance
-}
-
-// -- queries --
-function getRef() {
-  return mMaterial
 }
