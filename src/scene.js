@@ -60,7 +60,7 @@ function generate() {
 }
 
 function rotate(translation) {
-  mScene.rotation.y += translation * 0.01
+  mRock.ref.rotation.y += translation * 0.01
 }
 
 function setParams({ ["emissive-intensity"]: emission, ...params }) {

@@ -12,11 +12,11 @@ const kTypes = {
 
 const kOptions = Options.parse([
   { name: "scale", type: kTypes.Float, val: 1.0, min: 0.0, step: 0.1 },
-  { name: "depth", type: kTypes.Int, val: 0, min: 0 },
-  { name: "taper", type: kTypes.FloatRange, l: 0.7, r: 0.9, min: 0, max: 1.0, step: 0.01 },
-  { name: "child (count)", type: kTypes.IntRange, l: 5, r: 10, min: 0, step: 1 },
-  { name: "child (decay)", type: kTypes.Int, val: 2, min: 0, step: 1 },
-  { name: "child (shrink)", type: kTypes.FloatRange, l: 0.6, r: 0.8, val: 0.0, min: 0, step: 0.1 },
+  { name: "depth", type: kTypes.Int, val: 1, min: 0 },
+  { name: "taper", type: kTypes.FloatRange, l: 0.7, r: 0.9, min: 0, max: 1.0, step: 0.1 },
+  { name: "shrink", type: kTypes.FloatRange, l: 0.6, r: 0.8, val: 0.0, min: 0, step: 0.1 },
+  { name: "children (count)", type: kTypes.IntRange, l: 5, r: 10, min: 0, step: 1 },
+  { name: "children (decay)", type: kTypes.Int, val: 2, min: 0, step: 1 },
   { name: "emissive (intensity)", type: kTypes.Float, val: 1.0, min: 0, max: 1.0, step: 0.1 },
 ])
 

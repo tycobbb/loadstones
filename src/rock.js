@@ -183,13 +183,13 @@ export class Rock {
   }
 
   genChildCount(level) {
-    let count = unlerp(rand(), ...this.params["child-count"])
-    count -= level * this.params["child-decay"]
+    let count = unlerp(rand(), ...this.params["children-count"])
+    count -= level * this.params["children-decay"]
     return Math.max(count, 0)
   }
 
   genChildScale(slab) {
-    const scale = unlerp(rand(), ...this.params["child-shrink"])
+    const scale = unlerp(rand(), ...this.params.shrink)
     return slab.scl.x * scale
   }
 
