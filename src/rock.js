@@ -117,17 +117,11 @@ export class Rock {
         continue
       }
 
-      // get hit location, normal
-      pos.copy(hit.point)
-      dir.copy(hit.face.normal)
-
-      // dir.applyQuaternion(rock.group.quaternion)
-
-      // get hf0 location, normal
+      // get hit location in rock space
       pos.copy(hf0.point)
       pos.applyMatrix4(slab.ref.matrix)
 
-      // get normal direction
+      // get normal in rock space
       dir.copy(hf0.face.normal)
       dir.applyQuaternion(slab.ref.quaternion)
 
