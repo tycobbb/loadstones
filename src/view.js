@@ -48,6 +48,7 @@ export function init(id, scene) {
   mRenderer = new T.WebGLRenderer()
   mRenderer.setSize(w, h)
   mRenderer.shadowMap.enabled = true
+  mRenderer.shadowMap.type = T.PCFSoftShadowMap
 
   // add to dom
   $mEl.appendChild(mRenderer.domElement)

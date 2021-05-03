@@ -47,8 +47,10 @@ export function equalish(l, r) {
     const li = l[key]
     const ri = r[key]
 
-    if (li instanceof Object && !equalish(li, ri)) {
-      return false
+    if (li instanceof Object) {
+      if (!equalish(li, ri)) {
+        return false
+      }
     } else if (li !== ri) {
       return false
     }

@@ -59,6 +59,10 @@ export class Rock {
     const pos = new T.Vector3()
     const dir = new T.Vector3()
 
+    // temp storage for doing calculations
+    const vec = new T.Vector3()
+    const rot = new T.Quaternion()
+
     // gen child count
     const n = rock.genChildCount(depth)
     if (n === 0) {
@@ -117,13 +121,26 @@ export class Rock {
         continue
       }
 
-      // get hit location in rock space
+      // get pos from hit location in rock space
       pos.copy(hf0.point)
       pos.applyMatrix4(slab.ref.matrix)
 
-      // get normal in rock space
+      // get dir from normal in rock space
       dir.copy(hf0.face.normal)
       dir.applyQuaternion(slab.ref.quaternion)
+
+      // add some jitter the dir
+      vec.setFromSphericalCoords(
+        // unit vector
+        1.0,
+        // in the generated range
+        this.genAngle() * Math.PI,
+        // anywhere on the unit circle
+        unlerp(rand(), 0.0, 2 * Math.PI),
+      )
+
+      rot.setFromUnitVectors(T.Object3D.DefaultUp, vec)
+      dir.applyQuaternion(rot)
 
       // gen child scale based on parent
       const cs = slab.scl.x * rock.genScale()
@@ -188,6 +205,10 @@ export class Rock {
 
   genInset() {
     return unlerp(rand(), ...this.params.inset)
+  }
+
+  genAngle() {
+    return unlerp(rand(), ...this.params.angle)
   }
 
   genChildCount(level) {

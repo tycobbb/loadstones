@@ -24,6 +24,11 @@ export function init() {
   mLight.position.set(3.0, 2.0, 2.0)
   mLight.lookAt(0.0, 0.0, 0.0)
   mLight.castShadow = true
+
+  const detail = 1 << 10
+  mLight.shadow.mapSize.x = detail
+  mLight.shadow.mapSize.y = detail
+
   mScene.add(mLight)
 
   // add a floor plane
